@@ -1,0 +1,20 @@
+directories:
+  output: dist
+  buildResources: build
+extraMetadata:
+  main: main.js
+files:
+  - from: .
+    filter:
+      - package.json
+  - from: dist/main
+  - from: dist/renderer
+  - from: dist/renderer-dll
+extraResources:
+  - from: static
+    to: static
+win:
+  target:
+    - portable
+extends: electron-webpack/electron-builder.yml
+electronVersion: 1.8.2

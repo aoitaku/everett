@@ -1,0 +1,379 @@
+Scenario
+  = lines:Lines* {
+  	return lines.filter((line) => line).reduce((b, a) => [
+      ...b,
+      ...Array.isArray(a) ? a : [a]
+    ], []) }
+
+Lines = Message / Command / PluginCommand / BlankLine
+
+Message = name:MessageCharacterName? text:Text+ {
+  const [first, ...rest] = text
+  return [
+    {
+      code: 101,
+      parameters: []
+    },
+  	{
+      code: 401,
+      parameters: [first],
+      name: name ? name : null
+    },
+    ...rest.map((param) => {
+      return {
+        code: 401,
+        parameters: [param],
+      }
+    }),
+  ]
+}
+
+Text = $(!Prefices) text:Chars Space* Linebreak {
+  return text
+}
+
+MessageCharacterName = $MessageCharacterPrefix text:Chars Space* Linebreak+ {
+  return text
+}
+
+PluginCommand = $PluginCommandPrefix text:Chars _* Linebreak {
+  return { code: 356, parameters: [text] }
+}
+
+Command = $CommandPrefix command:_Command _* Linebreak {
+  return command
+}
+
+_Command = ParameterlessCommand
+/ SingleNumberParameterCommand
+/ TintCommand
+/ FlashCommand
+/ ShakeCommand
+/ ShowPictureCommand
+/ MovePictureCommand
+/ RotatePictureCommand
+/ TintPictureCommand
+/ WeatherCommand
+/ PlayAudioCommand
+/ PlayMovieCommand
+/ ChangeBackgroundCommand
+
+ParameterlessCommand = code:ParameterlessCommandName {
+  return {
+    code,
+    parameters: []
+  }
+}
+
+TintCommand = "tintScreen" _+ parameter:TintParameters {
+  return {
+    code: 223,
+    parameters,
+  }
+}
+FlashCommand = "flashScreen" _+ parameters:FlashParameters {
+  return {
+    code: 224,
+    parameters,
+  }
+}
+ShakeCommand = "shakeScreen" _+ parameters:ShakeParameters {
+  return {
+    code: 225,
+    parameters,
+  }
+}
+SingleNumberParameterCommand = code:SingleNumberParameterCommandName _+ parameter:Number {
+  return {
+    code,
+    parameters: [parameter],
+  }
+}
+ShowPictureCommand = "showPicture" _+ parameters:ShowPictureParameters {
+  return {
+    code: 231,
+    parameters,
+  }
+}
+MovePictureCommand = "movePicture" _+ parameters:MovePictureParameters {
+  return {
+    code: 232,
+    parameters,
+  }
+}
+RotatePictureCommand = "rotatePicture" _+ parameters:RotatePictureParameters {
+  return {
+    code: 233,
+    parameters,
+  }
+}
+TintPictureCommand = "tintPicture" _+ parameters:TintPictureParameters {
+  return {
+    code: 234,
+    parameters,
+  }
+}
+WeatherCommand = "weather" _+ parameters:WeatherParameters {
+  return {
+    code: 236,
+    parameters,
+  }
+}
+PlayAudioCommand = code:PlayAudioCommandName _+ parameters:PlayAudioParameters {
+  return {
+    code,
+    parameters,
+  }
+}
+PlayMovieCommand = "playMovie" _+ parameter:String {
+  return {
+    code: 261,
+    parameters: [ parameter ],
+  }
+}
+ChangeBackgroundCommand = "changeBackground" _+ parameters:ChangeBackgroundParameters {
+  return {
+    code: 284,
+    parameters,
+  }
+}
+
+ParameterlessCommandName = "fadeoutScreen" {
+  return 221
+} / "fadeinScreen"{
+  return 222
+} / "saveBGM" {
+  return 243
+} / "resumeBGM" {
+  return 244
+} / "stopSE" {
+  return 251
+} / "save" {
+  return 352
+} / "gameOver" {
+  return 353
+} / "returnToTitle" {
+  return 354
+} 
+SingleNumberParameterCommandName = "wait" {
+  return 230
+} / "erasePicture" {
+  return 235
+} / "fadeoutBGM" {
+  return 242
+} / "fadeoutBGS" {
+  return 246
+}
+PlayAudioCommandName = "playBGM" {
+  return 241
+} / "playBGS" {
+  return 245
+} / "playME" {
+  return 249
+} / "playSE" {
+  return 250
+}
+
+TintParameters = color:ColorParameter _+
+duration:DurationParameter
+wait:WaitParameter {
+  return [
+    color,
+    duration,
+    wait,
+  ]
+}
+FlashParameters = color:ColorParameter _+
+duration:DurationParameter
+wait:WaitParameter {
+  return [
+    color,
+    duration,
+    wait,
+  ]
+}
+ShakeParameters = "force:" _* force:Number _+
+"speed:" _* speed:Number _+
+duration:DurationParameter
+wait:WaitParameter {
+  return [
+    force,
+    speed,
+    duration,
+    wait,
+  ]
+}
+WeatherParameters = "type:" _* weather:WeatherType _+
+"force:" _* force:Number _+
+duration:DurationParameter
+wait:WaitParameter {
+  return [
+    weather,
+    force,
+    duration,
+    wait,
+  ]
+}
+ShowPictureParameters = id:Number _+ name:String _+ parameters:PictureParameters {
+  return [
+    id,
+    name,
+    ...parameters,
+  ]  
+}
+MovePictureParameters = id:Number _+
+parameters:PictureParameters _+
+duration:DurationParameter
+wait:WaitParameter {
+  return [
+    id,
+    null,
+    ...parameters,
+    duration,
+    wait,
+  ]
+}
+RotatePictureParameters = id:Number _+ "speed:" _* rotateSpeed:SignedNumber {
+  return [
+    id,
+    rotateSpeed,
+  ]
+}
+TintPictureParameters = id:Number _+ parameters:TintParameters {
+  return [
+    id,
+    ...parameters,
+  ]
+}
+PictureParameters = origin:OriginType _+
+position:PicturePositionParameter _+
+"scale:" _* scale:PointParameter _+
+"opacity:" _* opacity:Number _+
+"blend:" _* blend:BlendType {
+  return [
+    origin,
+    ...position,
+    ...scale,
+    opacity,
+    blend,
+  ]
+}
+ChangeBackgroundParameters = name:String _*
+"loopX:" _* loopX:BackgroundLoopParameter _+
+"loopY:" _* loopY:BackgroundLoopParameter {
+  return [
+    name,
+    loopX === false ? 0 : 1,
+    loopY === false ? 0 : 1,
+    loopX === false ? 0 : loopX,
+    loopY === false ? 0 : loopY,
+  ]
+}
+PlayAudioParameters = name:String _*
+"volume:" _* volume:Number _+
+"pitch:" _* pitch:Number _+
+"pan:" _* pan:SignedNumber {
+  return [{
+    name,
+    volume,
+    pitch,
+    pan,
+  }]
+}
+
+ColorParameter = BracketOpen _* r:Number _+ g:Number _+ b:Number _+ a:Number _* BracketClose {
+  return [r, g, b, a]
+}
+DurationParameter = "duration:" _* duration:Number {
+  return duration
+}
+WaitParameter = wait:(_+ "wait")? {
+  return !!wait
+}
+PointParameter = BracketOpen _* x:SignedNumber _+ y:SignedNumber _* BracketClose {
+  return [x, y]
+}
+PicturePositionParameter = position:PointParameter byVariable:(_+ "byVariable")? {
+  return [byVariable ? 1 : 0, ...position]
+}
+BackgroundLoopParameter = SignedNumber / False
+
+WeatherType = "rain" {
+  return 0
+} / "storm" {
+  return 1
+} / "snow" {
+  return 2
+} / "none" {
+  return 3
+} / "雨" {
+  return 0
+} / "嵐" {
+  return 1
+} / "雪" {
+  return 2
+} / "なし" {
+  return 3
+}
+OriginType = "topLeft" {
+  return 0
+} / "center" {
+  return 1
+} / "左上" {
+  return 0
+} / "中央" {
+  return 1
+}
+BlendType = "normal" {
+  return 0
+} / "add" {
+  return 1
+} / "multiply" {
+  return 2
+} / "screen" {
+  return 3
+} / "通常" {
+  return 0
+} / "加算" {
+  return 1
+}　/ "乗算" {
+  return 2
+} / "スクリーン" {
+  return 3
+}
+
+Prefices = CommandPrefix / PluginCommandPrefix
+MessageCharacterPrefix = GreaterThan Space*
+PluginCommandPrefix = Percent
+CommandPrefix = At
+
+String = Quote chars:QuotedChar+ Quote {
+  return chars.join('')
+}
+Number = num:([0-9]+) {
+  return parseInt(num.join(''), 0)
+}
+SignedNumber = sign:Minus? num:([0-9]+) {
+  return parseInt((sign ? [sign, ...num] : num).join(''), 0)
+}
+Boolean = True / False
+True = "true" { return true }
+False = "false" { return false }
+BlankLine = Linebreak { return null }
+
+Chars = text:(Char+) {
+  return text.join('')
+}
+_ = Space
+Minus = "-"
+Percent = "%"
+At = "@"
+GreaterThan = ">"
+Coron = ":"
+Quote = "\""
+Space = " "
+BracketOpen = "["
+BracketClose = "]"
+Char = [^\n]
+Linebreak = "\n"
+QuotedChar = [^"\n]

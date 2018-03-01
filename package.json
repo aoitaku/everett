@@ -1,0 +1,66 @@
+{
+  "name": "everett",
+  "productName": "everett",
+  "version": "0.0.0",
+  "author": "aoitaku <aoitaku@gmail.com>",
+  "description": "Event command editor for RPG MV",
+  "license": "Zlib",
+  "main": "./dist/electron/main.js",
+  "scripts": {
+    "build": "node .electron-vue/build.js",
+    "build:darwin": "cross-env BUILD_TARGET=darwin node .electron-vue/build.js",
+    "build:linux": "cross-env BUILD_TARGET=linux node .electron-vue/build.js",
+    "build:mas": "cross-env BUILD_TARGET=mas node .electron-vue/build.js",
+    "build:win32": "cross-env BUILD_TARGET=win32 node .electron-vue/build.js",
+    "build:clean": "del dist/electron/* !.gitkeep",
+    "build:web": "webpack --env.production --config .electron-vue webpack.web.config.js",
+    "compile": "electron-webpack",
+    "dist": "electron-builder",
+    "dev": "electron-webpack dev",
+    "build-parser": "pegjs -o src/renderer/parser.js src/syntax.peg",
+    "postinstall": ""
+  },
+  "build": {
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  },
+  "dependencies": {
+    "element-ui": "^2.2.0",
+    "source-map-support": "^0.4.17",
+    "vue": "^2.3.3",
+    "vue-awesome": "^2.3.4",
+    "vue-electron": "^1.0.6",
+    "vue-router": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-istanbul": "^4.1.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.28.9",
+    "del-cli": "^1.1.0",
+    "devtron": "^1.4.0",
+    "electron": "^1.7.5",
+    "electron-builder": "^20.2.0",
+    "electron-debug": "^1.4.0",
+    "electron-packager": "^8.5.0",
+    "electron-webpack": "^1.4.2",
+    "electron-webpack-ts": "^1.1.2",
+    "electron-webpack-vue": "^1.0.7",
+    "node-sass": "^4.7.2",
+    "pegjs": "^0.10.0",
+    "pug": "^2.0.0-rc.4",
+    "pug-loader": "^2.3.0",
+    "sass-loader": "^6.0.6",
+    "typescript": "^2.5.2",
+    "vue-loader": "^12.2.2",
+    "vue-property-decorator": "^6.0.0",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^3.5.2"
+  }
+}
