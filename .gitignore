@@ -2,7 +2,9 @@
 dist/electron/*
 dist/web/*
 dist/win-unpacked/*
+dist/main/*
 dist/*.exe
+dist/*.zip
 build/*
 !build/icons
 node_modules/

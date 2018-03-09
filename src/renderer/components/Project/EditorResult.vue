@@ -49,6 +49,7 @@ export default class EditorResult extends Vue {
     word-break: break-all
     white-space: pre-wrap
     height: calc(100% - 29px)
+    overflow-y: scroll
     &::-webkit-scrollbar
       width: 5px
     &::-webkit-scrollbar-track 

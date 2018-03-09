@@ -1,9 +1,9 @@
-Scenario
-  = lines:Lines* {
-  	return lines.filter((line) => line).reduce((b, a) => [
-      ...b,
-      ...Array.isArray(a) ? a : [a]
-    ], []) }
+Scenario = lines:Lines* {
+  return lines.filter((line) => line).reduce((b, a) => [
+    ...b,
+    ...Array.isArray(a) ? a : [a]
+  ], [])
+}
 
 Lines = Message / Command / PluginCommand / BlankLine
 
@@ -28,7 +28,7 @@ Message = name:MessageCharacterName? text:Text+ {
   ]
 }
 
-Text = $(!Prefices) text:Chars Space* Linebreak {
+Text = $(!Prefices) text:Chars Space* Linebreak? {
   return text
 }
 
@@ -36,11 +36,11 @@ MessageCharacterName = $MessageCharacterPrefix text:Chars Space* Linebreak+ {
   return text
 }
 
-PluginCommand = $PluginCommandPrefix text:Chars _* Linebreak {
+PluginCommand = $PluginCommandPrefix text:Chars _* Linebreak? {
   return { code: 356, parameters: [text] }
 }
 
-Command = $CommandPrefix command:_Command _* Linebreak {
+Command = $CommandPrefix command:_Command _* Linebreak? {
   return command
 }
 
@@ -65,7 +65,7 @@ ParameterlessCommand = code:ParameterlessCommandName {
   }
 }
 
-TintCommand = "tintScreen" _+ parameter:TintParameters {
+TintCommand = "tintScreen" _+ parameters:TintParameters {
   return {
     code: 223,
     parameters,

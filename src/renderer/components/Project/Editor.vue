@@ -1,32 +1,40 @@
 <template lang="pug">
-.editor
-  el-input(type="textarea", v-model="input")
+#editor
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Watch } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
+import * as ace from 'brace'
 
 @Component
 export default class Editor extends Vue {
-  public input = ''
+  public editor: ace.Editor
 
-  @Watch('input')
-  public inputChanged (newValue: string, oldValue: string) {
-    this.$emit('input-changed', newValue, oldValue)
+  public mounted () {
+    this.editor = ace.edit('editor')
+    this.editor.getSession().setMode('ace/mode/everett')
+    this.editor.setOptions({
+      fontSize: '14px',
+      fontFamily: 'ime_jp_rp, Menlo, Consolas, メイリオ, monospace',
+      fixedWidthGutter: true,
+    })
+    this.editor.$blockScrolling = Infinity
+    this.editor.setTheme('ace/theme/textmate')
+    this.editor.getSession().on('change', () => {
+      this.$emit('input-changed', this.editor.getValue())
+    })
   }
 }
 </script>
 
 <style lang="sass">
+@font-face
+  font-family: 'ime_jp_rp'
+  src: url('../../assets/ime_jp_rp.woff') format('woff')
 .project
-  .editor
-    textarea.el-textarea__inner
-      font-family: 'Menlo', 'consolas', 'メイリオ', monospace
-      resize: none
-      height: 100%
-      outline: none
-      border: none
+  #editor
+    .ace_scrollbar-v
       &::-webkit-scrollbar
         width: 5px
       &::-webkit-scrollbar-track 
@@ -34,11 +42,24 @@ export default class Editor extends Vue {
       &::-webkit-scrollbar-thumb 
         background-color: rgba(95, 95, 95, 0.5)
         border-radius: 5px
+    .ace_operator
+      color: #3f51b5
+    .ace_symbol
+      color: #F44336
+    .ace_command
+      color: #2196f3
+    .ace_number
+      color: #F44336
+    .ace_keyword
+      color: #009688
+    .ace_attribute
+      color: #2196f3
+    .ace_string
+      color: #009688
+
 </style>
 <style lang="sass" scoped>
-.editor
+#editor
   height: 100%
-  .el-textarea
-    height: 100%
   flex-grow: 1
 </style>
