@@ -1,24 +1,56 @@
 <template lang="pug">
-.command-usage(v-html="processedContent")
+.command-usage
+  span.symbol @
+  span.command {{ name }}
+  span.parameterSignature(v-for="signature in signatures")
+    | &ensp;
+    span(v-if="signature.name")
+      span.attribute {{ signature.name }}
+      span.operator :
+      | &nbsp;
+    span.select(v-if="signature.type === 'select'")
+      span
+        i(:class="valueType(signature.value[0])") {{ signature.value[0] }}
+      span(v-for="value in signature.value.slice(1)")
+        | &ensp;|&nbsp;
+        i(:class="valueType(value)") {{ value }}
+    span.tuple(v-if="signature.type === 'tuple'")
+      span.operator [
+      span
+        i(:class="valueType(signature.value[0])") {{ signature.value[0] }}
+      span(v-for="value in signature.value.slice(1)")
+        | &nbsp;
+        i(:class="valueType(value)") {{ value }}
+      span.operator ]
+    span.option(v-if="signature.type === 'option'")
+      | (
+      i(:class="valueType(signature.value)") {{ signature.value }}
+      | )
+    span.single(v-if="!signature.type")
+      i(:class="valueType(signature.value)") {{ signature.value }}
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator';
+import { IParameterSignature } from '../../../commands/definitions'
 
-@Component({
-  filters: {
-    
-  },
-})
-export default class CommandFormura extends Vue {
-  @Prop({ default: '' })
-  public content: string
+@Component
+export default class CommandUsage extends Vue {
+  @Prop()
+  public name: string
 
-  public get processedContent () {
-    return this.content.replace(/_([^_]+)_/g, (match, part: string) => {
-      return `<i>${part}</i>`
-    })
+  @Prop()
+  public signatures: IParameterSignature[]
+
+  public valueType (value: string) {
+    switch (value) {
+    case 'string':
+    case 'number':
+      return value
+    default:
+      return 'keyword'
+    }
   }
 }
 </script>
@@ -36,6 +68,18 @@ export default class CommandFormura extends Vue {
 
 <style lang="sass">
 .command-usage
-  i
-    color: #0000ff
+  .operator
+    color: #3f51b5
+  .symbol
+    color: #F44336
+  .command
+    color: #2196f3
+  .number
+    color: #F44336
+  .keyword
+    color: #009688
+  .attribute
+    color: #2196f3
+  .string
+    color: #009688
 </style>

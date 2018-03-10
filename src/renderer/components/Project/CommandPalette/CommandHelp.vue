@@ -1,6 +1,6 @@
 <template lang="pug">
 .command-help
-  command-usage(:content="signature")
+  command-usage(:name="name", :signatures="parameterSignatures")
   command-example(:content="example")
 </template>
 
@@ -19,11 +19,16 @@ import { ICommandDefinition } from '../../../commands/definitions'
 })
 export default class CommandHelp extends Vue {
   @Prop({ default: {
+    name: '',
     title: '',
     example: '',
-    signature: '',
+    parameterSignatures: [],
   }})
   public item: ICommandDefinition
+
+  public get name () {
+    return this.item.name
+  }
 
   public get title () {
     return this.item.title
@@ -33,8 +38,8 @@ export default class CommandHelp extends Vue {
     return this.item.example
   }
 
-  public get signature () {
-    return this.item.signature
+  public get parameterSignatures () {
+    return this.item.parameterSignatures
   }
 }
 </script>

@@ -29,11 +29,31 @@ function v (value: number) {
   return `{#${String(value).padStart(4, '0')}}`
 }
 
+export interface ISingleParameterSignature {
+  type?: string
+  value: string
+  name?: string
+}
+
+export interface IMulitipleParameterSignature  { 
+  type: 'tuple'
+  value: string[]
+  name?: string
+}
+
+export interface ISelectParameterSignature  { 
+  type: 'select'
+  value: string[]
+  name?: string
+}
+
+export type IParameterSignature = IMulitipleParameterSignature | ISelectParameterSignature | ISingleParameterSignature
+
 export interface ICommandDefinition {
   name: string
   title: string
   parameters: string[]
-  signature: string
+  parameterSignatures: IParameterSignature[]
   example: string
   describe (parameters: any[]): string
 }
@@ -46,7 +66,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@fadeoutScreen',
+    parameterSignatures: [],
     example: '@fadeoutScreen',
     describe (parameters: IFadeoutScreenCommand['parameters']) {
       return `◆${this.title}`
@@ -59,7 +79,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@fadeinScreen',
+    parameterSignatures: [],
     example: '@fadeinScreen',
     describe (parameters: IFadeinScreenCommand['parameters']) {
       return `◆${this.title}`
@@ -74,7 +94,11 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '効果時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
-    signature: '@tintScreen [_number_ _number_ _number_ _number_] duration: _number_ (_wait_)',
+    parameterSignatures: [
+      { type: 'tuple', value: ['number', 'number', 'number', 'number'] },
+      { name: 'duration', value: 'number' },
+      { value: 'wait', type: 'option' },
+    ],
     example: '@tintScreen [255 255 255 100] duration: 30 wait',
     describe ([color, duration, wait]: ITintScreenCommand['parameters']) {
       return `◆${this.title}：(${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
@@ -89,7 +113,11 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '効果時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
-    signature: '@flashScreen [_number_ _number_ _number_ _number_] duration: _number_ (_wait_)',
+    parameterSignatures: [
+      { type: 'tuple', value: ['number', 'number', 'number', 'number'] },
+      { name: 'duration', value: 'number' },
+      { value: 'wait', type: 'option' },
+    ],
     example: '@flashScreen [255 255 255 100] duration: 30 wait',
     describe ([color, duration, wait]: IFlashScreenCommand['parameters']) {
       return `◆${this.title}：(${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
@@ -105,7 +133,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '効果時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
-    signature: '@shakeScreen force: _number_ speed: _number_ duration: _number_ (_wait_)',
+    parameterSignatures: [
+      { name: 'force', value: 'number' },
+      { name: 'speed', value: 'number' },
+      { name: 'duration', value: 'number' },
+      { value: 'wait', type: 'option' },
+    ],
     example: '@shakeScreen force: 5 speed: 5 duration: 10 wait',
     describe ([force, speed, duration, wait]: IShakeScreenCommand['parameters']) {
       return `◆${this.title}：${force}, ${speed}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
@@ -118,7 +151,9 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'ウェイトの長さ（フレーム）',
     ],
-    signature: '@wait _number_',
+    parameterSignatures: [
+      { value: 'number' },
+    ],
     example: '@wait 30',
     describe ([wait]: IWaitCommand['parameters']) {
       return `◆${this.title}：${wait}フレーム`
@@ -138,7 +173,16 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '不透明度',
       '合成方法(通常/加算/乗算/スクリーン)',
     ],
-    signature: '@showPicture _number_ _string_ _topLeft_ | _center_ [_number_ _number_] (_byVariable_) scale: [_number_ _number_] opacity: _number_ blend: _normal_ | _add_ | _multiply_ | _screen_',
+    parameterSignatures: [
+      { value: 'number' },
+      { value: 'string' },
+      { type: 'select', value: ['topLeft', 'center'] },
+      { type: 'tuple', value: ['number', 'number'] },
+      { value: 'byVariable', type: 'option' },
+      { name: 'scale', type: 'tuple', value: ['number', 'number'] },
+      { name: 'opacity', value: 'number' },
+      { name: 'blend', type: 'select', value: ['normal', 'add', 'multiply', 'screen'] },
+    ],
     example: '@showPicture 1 "ファイル名" topLeft [0 0] byVariable scale: [100 100] opacity: 255 blend: normal',
     describe ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend]: IShowPictureCommand['parameters']) {
       return `◆${this.title}：#${id}, ${file}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}`
@@ -158,7 +202,17 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '変更にかける時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
-    signature: '@movePicture _number_ _topLeft_ | _center_ [_number_ _number_] (_byVariable_) scale: [_number_ _number_] opacity: _number_ blend: _normal_ | _add_ | _multiply_ | _screen_ duration: _number_ (_wait_)',
+    parameterSignatures: [
+      { value: 'number' },
+      { type: 'select', value: ['topLeft', 'center'] },
+      { type: 'tuple', value: ['number', 'number'] },
+      { value: 'byVariable', type: 'option' },
+      { name: 'scale', type: 'tuple', value: ['number', 'number'] },
+      { name: 'opacity', value: 'number' },
+      { name: 'blend', type: 'select', value: ['normal', 'add', 'multiply', 'screen'] },
+      { name: 'duration', value: 'number' },
+      { value: 'wait', type: 'option' },
+    ],
     example: '@movePicture 1 topLeft [0 0] byVariable scale: [-100 100] opacity: 255 blend: normal duration: 20 wait',
     describe ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend, duration, wait]: IMovePictureCommand['parameters']) {
       return `◆${this.title}：#${id}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
@@ -172,7 +226,10 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ピクチャ番号',
       '回転速度（正数:反時計回り/負数:時計回り）',
     ],
-    signature: '@rotatePicture _number_ speed: _number_',
+    parameterSignatures: [
+      { value: 'number' },
+      { name: 'speed', value: 'number' },
+    ],
     example: '@rotatePicture 1 speed:5',
     describe ([id, speed]: IRotatePictureCommand['parameters']) {
       return `◆${this.title}：#${id}, ${speed}`
@@ -188,7 +245,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '変更にかける時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
-    signature: '@tintPicture _number_ [_number_ _number_ _number_ _number_] duration: _number_ (_wait_)',
+    parameterSignatures: [
+      { value: 'number' },
+      { type: 'tuple', value: ['number', 'number', 'number', 'number'] },
+      { name: 'duration', value: 'number' },
+      { value: 'wait', type: 'option' },
+    ],
     example: '@tintPicture 1 [255 255 255 100] duration: 30 wait',
     describe ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
       return `◆${this.title}：#${id}, (${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
@@ -201,7 +263,9 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'ピクチャ番号',
     ],
-    signature: '@erasePicture _number_',
+    parameterSignatures: [
+      { value: 'number' },
+    ],
     example: '@erasePicture 1',
     describe ([id]: IErasePictureCommand['parameters']) {
       return `◆${this.title}：#${id}`
@@ -217,7 +281,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '効果時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
-    signature: '@weather _rain_ | _storm_ | _snow_ | _none_ force: _number_ duration: _number_ (_wait_) ',
+    parameterSignatures: [
+      { type: 'select', value: ['rain', 'storm', 'snow', 'none'] },
+      { name: 'force', value: 'number' },
+      { name: 'duration', value: 'number' },
+      { value: 'wait', type: 'option' },
+    ],
     example: '@weather rain force: 5 duration: 30 wait',
     describe ([type, force, duration, wait]: IWeatherCommand['parameters']) {
       const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v)=> v).join(', ')
@@ -234,7 +303,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ピッチ',
       '位相（正数:右/負数:左）',
     ],
-    signature: '@playBGM _string_ volume: _number_ pitch: _number_ pan: _number_',
+    parameterSignatures: [
+      { value: 'string' },
+      { name: 'volume', value: 'number' },
+      { name: 'pitch', value: 'number' },
+      { name: 'pan', value: 'number' },
+    ],
     example: '@playBGM "ファイル名" volume: 90 pitch: 100 pan: 0',
     describe ([{ name, volume, pitch, pan }]: IPlayBGMCommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
@@ -247,7 +321,9 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'フェードアウトにかける時間（秒）',
     ],
-    signature: '@fadeoutBGM _number_',
+    parameterSignatures: [
+      { value: 'number' },
+    ],
     example: '@fadeoutBGM 3',
     describe ([duration]: IFadeoutBGMCommand['parameters']) {
       return `◆${this.title}：${duration}秒`
@@ -260,7 +336,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@saveBGM',
+    parameterSignatures: [],
     example: '@saveBGM',
     describe (parameters: ISaveBGMCommand['parameters']) {
       return `◆${this.title}`
@@ -273,7 +349,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@resumeBGM',
+    parameterSignatures: [],
     example: '@resumeBGM',
     describe (parameters: IResumeBGMCommand['parameters']) {
       return `◆${this.title}`
@@ -289,7 +365,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ピッチ',
       '位相（正数:右/負数:左）',
     ],
-    signature: '@playBGS _string_ volume: _number_ pitch: _number_ pan: _number_',
+    parameterSignatures: [
+      { value: 'string' },
+      { name: 'volume', value: 'number' },
+      { name: 'pitch', value: 'number' },
+      { name: 'pan', value: 'number' },
+    ],
     example: '@playBGS "ファイル名" volume: 90 pitch: 100 pan: 0',
     describe ([{ name, volume, pitch, pan }]: IPlayBGSCommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
@@ -302,7 +383,9 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'フェードアウトにかける時間（秒）',
     ],
-    signature: '@fadeoutBGS _number_',
+    parameterSignatures: [
+      { value: 'number' },
+    ],
     example: '@fadeoutBGS 3',
     describe ([duration]: IFadeoutBGSCommand['parameters']) {
       return `◆${this.title}：${duration}秒`
@@ -318,7 +401,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ピッチ',
       '位相（正数:右/負数:左）',
     ],
-    signature: '@playME _string_ volume: _number_ pitch: _number_ pan: _number_',
+    parameterSignatures: [
+      { value: 'string' },
+      { name: 'volume', value: 'number' },
+      { name: 'pitch', value: 'number' },
+      { name: 'pan', value: 'number' },
+    ],
     example: '@playME "ファイル名" volume: 90 pitch: 100 pan: 0',
     describe ([{ name, volume, pitch, pan }]: IPlayMECommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
@@ -334,7 +422,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ピッチ',
       '位相（正数:右/負数:左）',
     ],
-    signature: '@playSE _string_ volume: _number_ pitch: _number_ pan: _number_',
+    parameterSignatures: [
+      { value: 'string' },
+      { name: 'volume', value: 'number' },
+      { name: 'pitch', value: 'number' },
+      { name: 'pan', value: 'number' },
+    ],
     example: '@playSE "ファイル名" volume: 90 pitch: 100 pan: 0',
     describe ([{ name, volume, pitch, pan }]: IPlaySECommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
@@ -347,7 +440,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@stopSE',
+    parameterSignatures: [],
     example: '@stopSE',
     describe (parameters: IStopSECommand['parameters']) {
       return `◆${this.title}`
@@ -360,7 +453,9 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'ムービーファイル名',
     ],
-    signature: '@playMovie _string_',
+    parameterSignatures: [
+      { value: 'string' },
+    ],
     example: '@playMovie "ファイル名"',
     describe ([file]: IPlayMovieCommand['parameters']) {
       return `◆${this.title}：${file}`
@@ -375,7 +470,11 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '横方向のループとスクロール量（数値:ループありで指定量スクロール/ループなし）',
       '縦方向のループとスクロール量（数値:ループありで指定量スクロール/ループなし）',
     ],
-    signature: '@changeBackground _string_ loopX: _false_ | _number_ loopY: _false_ | _number_',
+    parameterSignatures: [
+      { value: 'string' },
+      { name: 'loopX', type: 'select', value: ['false', 'number'] },
+      { name: 'loopY', type: 'select', value: ['false', 'number'] },
+    ],
     example: '@changeBackground "ファイル名" loopX: false loopY: 10',
     describe ([file, loopX, loopY, sX, sY]: IChangeBackgroundCommand['parameters']) {
       const loop = ` (${[loopX ? '横方向にループする' : null, loopY ? '縦方向にループする' : null].filter((v) => v).join(', ')})`
@@ -389,7 +488,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@save',
+    parameterSignatures: [],
     example: '@save',
     describe (parameters: ISaveCommand['parameters']) {
       return `◆${this.title}`
@@ -402,7 +501,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@gameOver',
+    parameterSignatures: [],
     example: '@gameOver',
     describe (parameters: IGameOverCommand['parameters']) {
       return `◆${this.title}`
@@ -415,7 +514,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     parameters: [
       'なし',
     ],
-    signature: '@returnToTitle',
+    parameterSignatures: [],
     example: '@returnToTitle',
     describe (parameters: IReturnToTitleCommand['parameters']) {
       return `◆${this.title}`
