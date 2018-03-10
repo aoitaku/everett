@@ -28,7 +28,7 @@
     }
   },
   "dependencies": {
-    "brace": "^0.11.1",
+    "codemirror": "^5.35.0",
     "element-ui": "^2.2.0",
     "source-map-support": "^0.4.17",
     "vue": "^2.3.3",
@@ -37,6 +37,7 @@
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
+    "@types/codemirror": "^0.0.55",
     "babel-core": "^6.26.0",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-transform-runtime": "^6.23.0",

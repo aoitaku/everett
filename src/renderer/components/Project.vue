@@ -57,7 +57,10 @@ export default class Project extends Vue {
   public mounted () {
     if (!this.selectedProject) {
       this.$router.push({ name: 'open-project' })
+      return
     }
+    const title = document.title.split('-').slice(-1)[0].trim()
+    document.title = `${this.projectNameFromPath(this.selectedProject)} - ${title}`
   }
 
   public canPlay () {
@@ -99,6 +102,18 @@ export default class Project extends Vue {
     } catch (err) {
       this.parseResult = errorTransform(err)
     }
+  }
+
+  private projectNameFromPath (projectPath: string) {
+    if (!projectPath) {
+      return ''
+    }
+    const systemFile = fs.readFileSync(`${path.dirname(projectPath)}/data/system.json`, 'utf-8')
+    const systemData = JSON.parse(systemFile)
+    if (!systemData) {
+      return ''
+    }
+    return `${systemData.gameTitle} (${path.dirname(projectPath)})`
   }
 }
 </script>

@@ -28,19 +28,19 @@ Message = name:MessageCharacterName? text:Text+ {
   ]
 }
 
-Text = $(!Prefices) text:Chars Space* Linebreak? {
+Text = $(!Prefices) text:Chars Space* EndOfLine {
   return text
 }
 
-MessageCharacterName = $MessageCharacterPrefix text:Chars Space* Linebreak+ {
+MessageCharacterName = $MessageCharacterPrefix text:Chars Space* EndOfLine {
   return text
 }
 
-PluginCommand = $PluginCommandPrefix text:Chars _* Linebreak? {
+PluginCommand = $PluginCommandPrefix text:Chars _* EndOfLine {
   return { code: 356, parameters: [text] }
 }
 
-Command = $CommandPrefix command:_Command _* Linebreak? {
+Command = $CommandPrefix command:_Command _* EndOfLine {
   return command
 }
 
@@ -375,5 +375,7 @@ Space = " "
 BracketOpen = "["
 BracketClose = "]"
 Char = [^\n]
+EndOfLine = Linebreak / EndOfInput
 Linebreak = "\n"
+EndOfInput = !.
 QuotedChar = [^"\n]

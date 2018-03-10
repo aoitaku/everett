@@ -1,65 +1,88 @@
 <template lang="pug">
-#editor
+.editor
+  textarea(ref="codemirror")
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
-import * as ace from 'brace'
+import { Component, Watch } from 'vue-property-decorator'
+import CodeMirror from 'codemirror'
 
 @Component
 export default class Editor extends Vue {
-  public editor: ace.Editor
+
+  public editor: CodeMirror.Editor
+  public content = ''
+  public skipNextChangeEvent = false
+
+  public get textarea () {
+    return this.$refs.codemirror as HTMLTextAreaElement
+  }
 
   public mounted () {
-    this.editor = ace.edit('editor')
-    this.editor.getSession().setMode('ace/mode/everett')
-    this.editor.setOptions({
-      fontSize: '14px',
-      fontFamily: 'ime_jp_rp, Menlo, Consolas, メイリオ, monospace',
-      fixedWidthGutter: true,
+    this.editor = CodeMirror.fromTextArea(this.textarea, {
+      mode: 'everett',
+      lineNumbers: true,
+      lineWrapping: true,
     })
-    this.editor.$blockScrolling = Infinity
-    this.editor.setTheme('ace/theme/textmate')
-    this.editor.getSession().on('change', () => {
-      this.$emit('input-changed', this.editor.getValue())
+    this.editor.setValue(this.content)
+    this.editor.on('change', (codemirror) => {
+      if (this.skipNextChangeEvent) {
+        this.skipNextChangeEvent = false
+        return
+      }
+      this.content = codemirror.getValue()
+      this.$emit('input-changed', codemirror.getValue())
     })
+  }
+
+  @Watch('content')
+  public contentChanged (newContent: string, oldContent: string) {
+    const content = this.editor.getValue()
+    if (newContent !== content) {
+      this.skipNextChangeEvent = true
+      const { left, top } = this.editor.getScrollInfo()
+      this.editor.setValue(newContent)
+      this.editor.scrollTo(left, top)
+    }
   }
 }
 </script>
 
 <style lang="sass">
-@font-face
-  font-family: 'ime_jp_rp'
-  src: url('../../assets/ime_jp_rp.woff') format('woff')
 .project
-  #editor
-    .ace_scrollbar-v
-      &::-webkit-scrollbar
-        width: 5px
-      &::-webkit-scrollbar-track 
-        background-color: #eee
-      &::-webkit-scrollbar-thumb 
-        background-color: rgba(95, 95, 95, 0.5)
-        border-radius: 5px
-    .ace_operator
+  .editor
+    .CodeMirror-wrap
+      height: 100%
+      .CodeMirror-vscrollbar
+        &::-webkit-scrollbar
+          width: 5px
+        &::-webkit-scrollbar-track 
+          background-color: #eee
+        &::-webkit-scrollbar-thumb 
+          background-color: rgba(95, 95, 95, 0.5)
+          border-radius: 5px
+      .CodeMirror-code
+        font-size: 14px
+        font-family: Menlo, Monaco, Consolas, "Courier New", "メイリオ", monospace
+    .cm-operator
       color: #3f51b5
-    .ace_symbol
+    .cm-symbol
       color: #F44336
-    .ace_command
+    .cm-command
       color: #2196f3
-    .ace_number
+    .cm-number
       color: #F44336
-    .ace_keyword
+    .cm-keyword
       color: #009688
-    .ace_attribute
+    .cm-attribute
       color: #2196f3
-    .ace_string
+    .cm-string
       color: #009688
 
 </style>
 <style lang="sass" scoped>
-#editor
+.editor
   height: 100%
   flex-grow: 1
 </style>

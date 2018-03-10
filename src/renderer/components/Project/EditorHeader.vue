@@ -1,7 +1,6 @@
 <template lang="pug">
 .editor-header
   el-button.nav-backward(type="text", @click="back") ‹ 戻る
-  .project-name {{ content | projectNameFromPath }}
   el-button.test-play(type="text", @click="play", :disabled="disabled") テストプレイ
 </template>
 
@@ -9,24 +8,8 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
-import path from 'path'
-import * as fs from 'fs'
 
-@Component({
-  filters: {
-    projectNameFromPath (projectPath: string) {
-      if (!projectPath) {
-        return ''
-      }
-      const systemFile = fs.readFileSync(`${path.dirname(projectPath)}/data/system.json`, 'utf-8')
-      const systemData = JSON.parse(systemFile)
-      if (!systemData) {
-        return ''
-      }
-      return `${systemData.gameTitle} (${path.dirname(projectPath)})`
-    },
-  },
-})
+@Component
 export default class EditorHeader extends Vue {
   @Prop({ default: '' })
   public content: string

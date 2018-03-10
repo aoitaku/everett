@@ -28,6 +28,10 @@ export default class OpenProject extends Vue {
     this.sharedState.selectedProject = files[0]
     this.$router.push({ name: 'project' })
   }
+
+  public mounted () {
+    document.title = document.title.split('-').slice(-1)[0].trim()
+  }
 }
 </script>
 

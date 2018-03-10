@@ -15,8 +15,8 @@ import 'vue-awesome/icons/music'
 import 'vue-awesome/icons/film'
 import 'vue-awesome/icons/cog'
 import 'vue-awesome/icons/puzzle-piece'
-import 'brace/theme/textmate'
-import './ace-everett-mode'
+import 'codemirror/lib/codemirror.css'
+import './everett-mode'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
