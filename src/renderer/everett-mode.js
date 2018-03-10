@@ -52,6 +52,10 @@ const mode = {
     next: 'separator',
   }],
   value: [{
+    token: 'operator',
+    regex: '(\\[) *',
+    next: 'list',
+  }, {
     token: 'number',
     regex: '(-?[0-9]+)',
     next: 'separator',
