@@ -4,6 +4,7 @@ export interface ISharedState  {
   selectedProject: string | null 
   eventDataJSON: string
   parseResult: string
+  source: string
   showMessageParameters: ShowMessageParameters
 }
 
@@ -16,6 +17,7 @@ export const store: IStore = {
     selectedProject: null,
     eventDataJSON: '',
     parseResult: '',
+    source: '',
     showMessageParameters: ["Actor1", 0, 0, 2],
   },
 }

@@ -1,9 +1,9 @@
 <template lang="pug">
 .project
-  editor-header(@play-clicked="play", :content="selectedProject", :disabled="!canPlay")
+  editor-header(@play-clicked="play", @file-saving="save", @file-opened="load", :content="selectedProject", :disabled="!canPlay")
   .middle
     command-palette
-    editor(@input-changed="inputChanged")
+    editor(:content='source', @input-changed="inputChanged")
     editor-result(@copy-clicked="copy", :content="parseResult", :disabled="!canCopy")
 
 </template>
@@ -22,6 +22,7 @@ import CommandPalette from './Project/CommandPalette.vue'
 import EditorHeader from './Project/EditorHeader.vue'
 import Editor from './Project/Editor.vue'
 import EditorResult from './Project/EditorResult.vue'
+import { promisify } from 'util'
 
 @Component({
   components: {
@@ -33,6 +34,7 @@ import EditorResult from './Project/EditorResult.vue'
 })
 export default class Project extends Vue {
   public sharedState = store.state
+  public source: string = ''
 
   public get selectedProject () {
     return this.sharedState.selectedProject
@@ -81,6 +83,19 @@ export default class Project extends Vue {
     ipcRenderer.send('runTestPlay', projectDir)
   }
 
+  public async save (filename: string) {
+    await promisify(fs.writeFile)(filename, this.source, 'utf-8')
+    this.$notify({
+      title: '保存しました',
+      message: `${filename} を更新しました。`,
+      type: 'success'
+    })
+  }
+
+  public load (filename: string) {
+    this.source = fs.readFileSync(filename, 'utf-8')
+  }
+
   public async copy () {
     if (!this.canCopy()) {
       return
@@ -95,6 +110,7 @@ export default class Project extends Vue {
   }
 
   public inputChanged (newValue: string, oldValue: string) {
+    this.source = newValue
     try {
       const result = resultTransform(Parser.parse(newValue))
       this.eventDataJSON = JSON.stringify(result)

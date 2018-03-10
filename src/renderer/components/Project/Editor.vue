@@ -5,15 +5,18 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Watch } from 'vue-property-decorator'
+import { Component, Prop, Watch } from 'vue-property-decorator'
 import CodeMirror from 'codemirror'
 
 @Component
 export default class Editor extends Vue {
-
   public editor: CodeMirror.Editor
-  public content = ''
   public skipNextChangeEvent = false
+
+  @Prop({
+    default: ''
+  })
+  public content: string
 
   public get textarea () {
     return this.$refs.codemirror as HTMLTextAreaElement
@@ -31,7 +34,6 @@ export default class Editor extends Vue {
         this.skipNextChangeEvent = false
         return
       }
-      this.content = codemirror.getValue()
       this.$emit('input-changed', codemirror.getValue())
     })
   }
