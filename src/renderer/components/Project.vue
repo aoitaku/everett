@@ -1,11 +1,22 @@
 <template lang="pug">
 .project
-  editor-header(@play-clicked="play", @file-saving="save", @file-opened="load", :content="selectedProject", :disabled="!canPlay")
+  editor-header(
+    @play-clicked="play",
+    @file-save-clicked="save",
+    @file-open-clicked="beforeOpen",
+    :filename="filename",
+    :disabled="!canPlay"
+  )
   .middle
     command-palette
     editor(:content='source', @input-changed="inputChanged")
     editor-result(@copy-clicked="copy", :content="parseResult", :disabled="!canCopy")
 
+  el-dialog(title="確認", ref="discardConfirmation", :visible.sync="confirmDiscarding")
+    span 現在の変更内容が失われます。よろしいですか？
+    span.dialog-footer(slot="footer")
+      el-button(@click="discardCancelled()") いいえ
+      el-button(type="primary", @click="discardConfirmed()") はい
 </template>
 
 <script lang="ts">
@@ -35,6 +46,12 @@ import { promisify } from 'util'
 export default class Project extends Vue {
   public sharedState = store.state
   public source: string = ''
+  public edited = false
+  public filename: string | null = null
+  public confirmDiscarding = false
+  public discard = false
+  public busy = false
+  public watcher: MutationObserver
 
   public get selectedProject () {
     return this.sharedState.selectedProject
@@ -56,6 +73,18 @@ export default class Project extends Vue {
     this.sharedState.parseResult = parseResult
   }
 
+  public get discardConfirmation () {
+    return (this.$refs.discardConfirmation as Vue).$el
+  }
+
+  public created () {
+    this.watcher = new MutationObserver(() => {
+      if (this.discardConfirmation.style.display === 'none') {
+        this.discardConfirmationClosed()
+      }
+    })
+  }
+
   public mounted () {
     if (!this.selectedProject) {
       this.$router.push({ name: 'open-project' })
@@ -63,14 +92,19 @@ export default class Project extends Vue {
     }
     const title = document.title.split('-').slice(-1)[0].trim()
     document.title = `${this.projectNameFromPath(this.selectedProject)} - ${title}`
+    this.watcher.observe(this.discardConfirmation, { attributes: true, attributeFilter: ['style'] })
+  }
+
+  public destroyed () {
+    this.watcher.disconnect()
   }
 
   public canPlay () {
-    return this.selectedProject && 0 < this.eventDataJSON.length
+    return this.selectedProject && !this.busy && 0 < this.eventDataJSON.length
   }
 
   public canCopy () {
-    return 0 < this.eventDataJSON.length
+    return !this.busy && 0 < this.eventDataJSON.length
   }
 
   public play () {
@@ -83,17 +117,47 @@ export default class Project extends Vue {
     ipcRenderer.send('runTestPlay', projectDir)
   }
 
-  public async save (filename: string) {
-    await promisify(fs.writeFile)(filename, this.source, 'utf-8')
+  public async save () {
+    if (!this.filename) {
+      const file = remote.dialog.showSaveDialog({
+        title: 'Save file',
+        defaultPath: '.',
+      })
+      if (!file) {
+        return
+      }
+      this.filename = file
+    }
+    await promisify(fs.writeFile)(this.filename, this.source, 'utf-8')
+    this.edited = false
     this.$notify({
       title: '保存しました',
-      message: `${filename} を更新しました。`,
+      message: `${this.filename} を更新しました。`,
       type: 'success'
     })
   }
 
-  public load (filename: string) {
-    this.source = fs.readFileSync(filename, 'utf-8')
+  public beforeOpen () {
+    if (this.edited) {
+      this.busy = true
+      this.confirmDiscarding = true
+      return
+    }
+    this.open()
+  }
+
+  public open () {
+    const files = remote.dialog.showOpenDialog({
+      properties: ['openFile'],
+      title: 'Open file',
+      defaultPath: '.',
+    })
+    if (!files) {
+      return
+    }
+    this.filename = files[0]
+    this.source = fs.readFileSync(this.filename, 'utf-8')
+    this.edited = false
   }
 
   public async copy () {
@@ -109,7 +173,25 @@ export default class Project extends Vue {
     })
   }
 
+  public discardConfirmationClosed () {
+    if (this.discard) {
+      this.discard = false
+      this.open()
+    }
+    this.busy = false
+  }
+
+  public discardCancelled () {
+    this.confirmDiscarding = false
+  }
+
+  public discardConfirmed () {
+    this.confirmDiscarding = false
+    this.discard = true
+  }
+
   public inputChanged (newValue: string, oldValue: string) {
+    this.edited = this.edited || newValue !== oldValue
     this.source = newValue
     try {
       const result = resultTransform(Parser.parse(newValue))
