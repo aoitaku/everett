@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import { Button, Collapse, CollapseItem, Dialog, Input, MessageBox, Notification, Table, TableColumn, Tabs, TabPane } from 'element-ui'
+import { Button, Collapse, CollapseItem, Dialog, Input, Notification, Table, TableColumn, Tabs, TabPane } from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/ja'
 import 'element-ui/lib/theme-chalk/index.css' 
 import App from './App.vue'
@@ -33,7 +33,6 @@ Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.component('icon', Icon)
 Vue.prototype.$notify = Notification
-Vue.prototype.$confirm = MessageBox.confirm
 
 /* eslint-disable no-new */
 new Vue({
