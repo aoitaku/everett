@@ -1,40 +1,123 @@
 <template lang="pug">
 .editor-header
-  el-button.nav-backward(type="text", @click="back") ‹ 戻る
-  el-button.open(type="text", @click="open") 開く
-  el-button.save(type="text", @click="save") 保存
-  .filename {{ filename ? filename : '新規ファイル' }} を編集中
-  el-button.test-play(type="text", @click="play", :disabled="disabled") テストプレイ
+  el-button.nav-backward(type="text", @click="beforeBack") ‹ 戻る
+  el-button.open(type="text", @click="beforeOpen") 開く
+  save
+  .filename {{ filename }} を編集中
+  test-play
+
+  el-dialog(title="確認", ref="discardConfirmation", :visible.sync="confirmDiscarding")
+    span 現在の変更内容が失われます。よろしいですか？
+    span.dialog-footer(slot="footer")
+      el-button(@click="discardCancelled()") いいえ
+      el-button(type="primary", @click="discardConfirmed()") はい
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
-import { ipcRenderer } from 'electron'
+import { Component } from 'vue-property-decorator'
+import { ipcRenderer, remote } from 'electron'
+import * as fs from 'fs'
+import { store } from '../../store'
+import Save from './EditorHeader/Save.vue'
+import TestPlay from './EditorHeader/TestPlay.vue'
 
-@Component
+@Component({
+  components: {
+    Save,
+    TestPlay,
+  },
+})
 export default class EditorHeader extends Vue {
-  @Prop({ default: false })
-  public disabled: boolean
+  public sharedState = store.state
+  public watcher: MutationObserver
+  public confirmDiscarding = false
+  public discard = false
+  public task: (() => void) | null = null
 
-  @Prop({ default: null })
-  public filename: string | null
+  public get discardConfirmation () {
+    return (this.$refs.discardConfirmation as Vue).$el
+  }
+
+  public get filename () {
+    return this.sharedState.selectedFile ? this.sharedState.selectedFile : '新規ファイル'
+  }
+
+  public created () {
+    this.watcher = new MutationObserver(() => {
+      if (this.discardConfirmation.style.display === 'none') {
+        this.discardConfirmationClosed()
+      }
+    })
+  }
+
+  public mounted () {
+    this.watcher.observe(this.discardConfirmation, { attributes: true, attributeFilter: ['style'] })
+  }
+
+  public destroyed () {
+    this.watcher.disconnect()
+  }
+
+  public beforeBack () {
+    if (this.sharedState.edited) {
+      this.sharedState.busy = true
+      this.confirmDiscarding = true
+      this.task = this.back
+      return
+    }
+    this.back()
+  }
 
   public back () {
     ipcRenderer.send('cleanTestData')
+    store.initState()
     this.$router.push({ name: 'open-project' })
   }
 
+  public beforeOpen () {
+    if (this.sharedState.edited) {
+      this.sharedState.busy = true
+      this.confirmDiscarding = true
+      this.task = this.open
+      return
+    }
+    this.open()
+  }
+
   public open () {
-    this.$emit('file-open-clicked')
+    const files = remote.dialog.showOpenDialog({
+      properties: ['openFile'],
+      title: 'Open file',
+      defaultPath: '.',
+    })
+    if (!files) {
+      return
+    }
+    this.sharedState.selectedFile = files[0]
+    store.updateSource(fs.readFileSync(this.sharedState.selectedFile, 'utf-8'))
+    this.sharedState.edited = false
   }
 
-  public save () {
-    this.$emit('file-save-clicked')
+  public discardConfirmationClosed () {
+    const task = this.task
+    this.task = null
+    if (this.discard) {
+      this.discard = false
+      if (task) {
+        task()
+      }
+    }
+    this.sharedState.busy = false
   }
 
-  public play () {
-    this.$emit('play-clicked')
+  public discardCancelled () {
+    this.confirmDiscarding = false
+  }
+
+  public discardConfirmed () {
+    this.confirmDiscarding = false
+    this.discard = true
   }
 }
 </script>

@@ -1,16 +1,18 @@
 <template lang="pug">
 .editor-result
   .content
-    | {{ content }}
+    | {{ sharedState.parseResult }}
   toolbar(position="bottom")
-    el-button(type="text", size="mini", @click="copyClicked", :disabled="disabled")
+    el-button(type="text", size="mini", @click="copy")
       | イベントコマンド形式でクリップボードにコピー
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import Toolbar from './Toolbar.vue'
+import { remote } from 'electron'
+import { store } from '../../store'
 
 @Component({
   components: {
@@ -18,14 +20,19 @@ import Toolbar from './Toolbar.vue'
   },
 })
 export default class EditorResult extends Vue {
-  @Prop({ default: '' })
-  public content: string
+  public sharedState = store.state
 
-  @Prop({ default: false })
-  public disabled: boolean
-
-  public copyClicked () {
-    this.$emit('copy-clicked')
+  public async copy () {
+    if (this.sharedState.busy || this.sharedState.eventDataJSON.length < 1) {
+      return
+    }
+    const testEventBuffer = new Buffer(this.sharedState.eventDataJSON, 'utf-8')
+    await remote.clipboard.writeBuffer('application/rpgmv-EventCommand', testEventBuffer)
+    this.$notify({
+      title: 'クリップボードにコピーしました',
+      message: 'イベントエディターの実行内容に貼り付けることができます',
+      type: 'success'
+    })
   }
 }
 </script>

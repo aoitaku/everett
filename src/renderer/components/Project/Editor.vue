@@ -5,18 +5,19 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop, Watch } from 'vue-property-decorator'
+import { Component, Watch } from 'vue-property-decorator'
 import CodeMirror from 'codemirror'
+import { store } from '../../store'
 
 @Component
 export default class Editor extends Vue {
   public editor: CodeMirror.Editor
   public skipNextChangeEvent = false
+  public sharedState = store.state
 
-  @Prop({
-    default: ''
-  })
-  public content: string
+  public get source () {
+    return this.sharedState.source
+  }
 
   public get textarea () {
     return this.$refs.codemirror as HTMLTextAreaElement
@@ -28,17 +29,20 @@ export default class Editor extends Vue {
       lineNumbers: true,
       lineWrapping: true,
     })
-    this.editor.setValue(this.content)
-    this.editor.on('change', (codemirror) => {
-      if (this.skipNextChangeEvent) {
-        this.skipNextChangeEvent = false
-        return
-      }
-      this.$emit('input-changed', codemirror.getValue())
-    })
+    this.editor.setValue(this.sharedState.source)
+    this.editor.on('change', this.inputChanged)
   }
 
-  @Watch('content')
+  public inputChanged (codemirror: CodeMirror.Editor) {
+    if (this.skipNextChangeEvent) {
+      this.skipNextChangeEvent = false
+      return
+    }
+    store.updateSource(codemirror.getValue())
+    this.sharedState.edited = true
+  }
+
+  @Watch('source')
   public contentChanged (newContent: string, oldContent: string) {
     const content = this.editor.getValue()
     if (newContent !== content) {
