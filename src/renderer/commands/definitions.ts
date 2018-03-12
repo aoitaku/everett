@@ -49,6 +49,14 @@ export interface ISelectParameterSignature  {
 
 export type IParameterSignature = IMulitipleParameterSignature | ISelectParameterSignature | ISingleParameterSignature
 
+export interface ICommandDescription {
+  content: string
+  color: string
+  text?: string
+  option?: string
+  prefix?: string
+}
+
 export interface ICommandDefinition {
   name: string
   title: string
@@ -56,6 +64,7 @@ export interface ICommandDefinition {
   parameterSignatures: IParameterSignature[]
   example: string
   describe (parameters: any[]): string
+  description (parameters: any[]): ICommandDescription
 }
 
 export const commandDefinitions: { [key: number]: ICommandDefinition } = {
@@ -71,6 +80,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe (parameters: IFadeoutScreenCommand['parameters']) {
       return `◆${this.title}`
     },
+    description (parameters: IFadeoutScreenCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'screen',
+      }
+    },
   },
   // IFadeinScreenCommand
   222: {
@@ -83,6 +98,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@fadeinScreen',
     describe (parameters: IFadeinScreenCommand['parameters']) {
       return `◆${this.title}`
+    },
+    description (parameters: IFadeinScreenCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'screen',
+      }
     },
   },
   // ITintScreenCommand
@@ -103,6 +124,13 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([color, duration, wait]: ITintScreenCommand['parameters']) {
       return `◆${this.title}：(${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
     },
+    description ([color, duration, wait]: ITintScreenCommand['parameters']) {
+      return {
+        content: `${this.title}：(${[color].join()}), ${duration}フレーム`,
+        color: 'screen',
+        option: wait ? ' (ウェイト)' : '',
+      }
+    },
   },
   // IFlashScreenCommand
   224: {
@@ -121,6 +149,13 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@flashScreen [255 255 255 100] duration: 30 wait',
     describe ([color, duration, wait]: IFlashScreenCommand['parameters']) {
       return `◆${this.title}：(${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
+    },
+    description ([color, duration, wait]: IFlashScreenCommand['parameters']) {
+      return {
+        content: `${this.title}：(${[color].join()}), ${duration}フレーム`,
+        color: 'screen',
+        option: wait ? ' (ウェイト)' : '',
+      }
     },
   },
   // IShakeScreenCommand
@@ -143,6 +178,13 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([force, speed, duration, wait]: IShakeScreenCommand['parameters']) {
       return `◆${this.title}：${force}, ${speed}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
     },
+    description ([force, speed, duration, wait]: IShakeScreenCommand['parameters']) {
+      return {
+        content: `${this.title}：${force}, ${speed}, ${duration}`,
+        color: 'screen',
+        option: wait ? ' (ウェイト)' : '',
+      }
+    },
   },
   // IWaitCommand
   230: {
@@ -157,6 +199,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@wait 30',
     describe ([wait]: IWaitCommand['parameters']) {
       return `◆${this.title}：${wait}フレーム`
+    },
+    description ([wait]: IWaitCommand['parameters']) {
+      return {
+        content: `${this.title}：${wait}フレーム`,
+        color: 'wait',
+      }
     },
   },
   // IShowPictureCommand
@@ -186,6 +234,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@showPicture 1 "ファイル名" topLeft [0 0] byVariable scale: [100 100] opacity: 255 blend: normal',
     describe ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend]: IShowPictureCommand['parameters']) {
       return `◆${this.title}：#${id}, ${file}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}`
+    },
+    description ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend]: IShowPictureCommand['parameters']) {
+      return {
+        content: `${this.title}：#${id}, ${file}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}`,
+        color: 'picture',
+      }
     },
   },
   // IMovePictureCommand
@@ -217,6 +271,13 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend, duration, wait]: IMovePictureCommand['parameters']) {
       return `◆${this.title}：#${id}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
     },
+    description ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend, duration, wait]: IMovePictureCommand['parameters']) {
+      return {
+        content: `${this.title}：#${id}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}, ${duration}フレーム`,
+        color: 'picture',
+        option: wait ? ' (ウェイト)' : '',
+      }
+    },
   },
   // IRotatePictureCommand
   233: {
@@ -233,6 +294,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@rotatePicture 1 speed:5',
     describe ([id, speed]: IRotatePictureCommand['parameters']) {
       return `◆${this.title}：#${id}, ${speed}`
+    },
+    description ([id, speed]: IRotatePictureCommand['parameters']) {
+      return {
+        content: `${this.title}：#${id}, ${speed}`,
+        color: 'picture',
+      }
     },
   },
   // ITintPictureCommand
@@ -255,6 +322,13 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
       return `◆${this.title}：#${id}, (${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
     },
+    description ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
+      return {
+        content: `${this.title}：#${id}, (${[color].join()}), ${duration}フレーム`,
+        color: 'picture',
+        option: wait ? ' (ウェイト)' : '',
+      }
+    },
   },
   // IErasePictureCommand
   235: {
@@ -269,6 +343,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@erasePicture 1',
     describe ([id]: IErasePictureCommand['parameters']) {
       return `◆${this.title}：#${id}`
+    },
+    description ([id]: IErasePictureCommand['parameters']) {
+      return {
+        content: `${this.title}：#${id}`,
+        color: 'picture',
+      }
     },
   },
   // IWeatherCommand
@@ -292,6 +372,14 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v)=> v).join(', ')
       return `◆${this.title}：${weather}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
     },
+    description ([type, force, duration, wait]: IWeatherCommand['parameters']) {
+      const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v)=> v).join(', ')
+      return {
+        content: `${this.title}：${weather}, ${duration}フレーム`,
+        color: 'screen',
+        option: wait ? ' (ウェイト)' : '',
+      }
+    },
   },
   // IPlayBGMCommand
   241: {
@@ -313,6 +401,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([{ name, volume, pitch, pan }]: IPlayBGMCommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
     },
+    description ([{ name, volume, pitch, pan }]: IPlayBGMCommand['parameters']) {
+      return {
+        content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
+        color: 'audioVideo',
+      }
+    },
   },
   // IFadeoutBGMCommand
   242: {
@@ -328,6 +422,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([duration]: IFadeoutBGMCommand['parameters']) {
       return `◆${this.title}：${duration}秒`
     },
+    description ([duration]: IFadeoutBGMCommand['parameters']) {
+      return {
+        content: `${this.title}：${duration}秒`,
+        color: 'audioVideo',
+      }
+    },
   },
   // ISaveBGMCommand
   243: {
@@ -341,6 +441,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe (parameters: ISaveBGMCommand['parameters']) {
       return `◆${this.title}`
     },
+    description (parameters: ISaveBGMCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'audioVideo',
+      }
+    },
   },
   // IResumeBGMCommand
   244: {
@@ -353,6 +459,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@resumeBGM',
     describe (parameters: IResumeBGMCommand['parameters']) {
       return `◆${this.title}`
+    },
+    description (parameters: IResumeBGMCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'audioVideo',
+      }
     },
   },
   // IPlayBGSCommand
@@ -375,6 +487,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([{ name, volume, pitch, pan }]: IPlayBGSCommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
     },
+    description ([{ name, volume, pitch, pan }]: IPlayBGSCommand['parameters']) {
+      return {
+        content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
+        color: 'audioVideo',
+      }
+    },
   },
   // IFadeoutBGSCommand
   246: {
@@ -389,6 +507,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@fadeoutBGS 3',
     describe ([duration]: IFadeoutBGSCommand['parameters']) {
       return `◆${this.title}：${duration}秒`
+    },
+    description ([duration]: IFadeoutBGSCommand['parameters']) {
+      return {
+        content: `${this.title}：${duration}秒`,
+        color: 'audioVideo',
+      }
     },
   },
   // IPlayMECommand
@@ -411,6 +535,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([{ name, volume, pitch, pan }]: IPlayMECommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
     },
+    description ([{ name, volume, pitch, pan }]: IPlayMECommand['parameters']) {
+      return {
+        content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
+        color: 'audioVideo',
+      }
+    },
   },
   // IPlaySECommand
   250: {
@@ -432,6 +562,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe ([{ name, volume, pitch, pan }]: IPlaySECommand['parameters']) {
       return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
     },
+    description ([{ name, volume, pitch, pan }]: IPlaySECommand['parameters']) {
+      return {
+        content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
+        color: 'audioVideo',
+      }
+    },
   },
   // IStopSECommand
   251: {
@@ -444,6 +580,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@stopSE',
     describe (parameters: IStopSECommand['parameters']) {
       return `◆${this.title}`
+    },
+    description (parameters: IStopSECommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'audioVideo',
+      }
     },
   },
   // IPlayMovieCommand
@@ -459,6 +601,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@playMovie "ファイル名"',
     describe ([file]: IPlayMovieCommand['parameters']) {
       return `◆${this.title}：${file}`
+    },
+    description ([file]: IPlayMovieCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'audioVideo',
+      }
     },
   },
   // IChangeBackgroundCommand
@@ -480,6 +628,14 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       const loop = ` (${[loopX ? '横方向にループする' : null, loopY ? '縦方向にループする' : null].filter((v) => v).join(', ')})`
       return `◆${this.title}：${file}${loopX || loopY ? loop : ''}`
     },
+    description ([file, loopX, loopY, sX, sY]: IChangeBackgroundCommand['parameters']) {
+      const loop = ` (${[loopX ? '横方向にループする' : null, loopY ? '縦方向にループする' : null].filter((v) => v).join(', ')})`
+      return {
+        content: `${this.title}：${file}`,
+        color: 'changeBackground',
+        option: loopX || loopY ? loop : '',
+      }
+    },
   },
   // ISaveCommand
   352: {
@@ -492,6 +648,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@save',
     describe (parameters: ISaveCommand['parameters']) {
       return `◆${this.title}`
+    },
+    description (parameters: ISaveCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'system',
+      }
     },
   },
   // IGameOverCommand
@@ -506,6 +668,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     describe (parameters: IGameOverCommand['parameters']) {
       return `◆${this.title}`
     },
+    description (parameters: IGameOverCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'system',
+      }
+    },
   },
   // IReturnToTitleCommand
   354: {
@@ -518,6 +686,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     example: '@returnToTitle',
     describe (parameters: IReturnToTitleCommand['parameters']) {
       return `◆${this.title}`
+    },
+    description (parameters: IReturnToTitleCommand['parameters']) {
+      return {
+        content: this.title,
+        color: 'system',
+      }
     },
   },
 }

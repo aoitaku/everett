@@ -1,7 +1,14 @@
 <template lang="pug">
 .editor-result
   .content
-    | {{ sharedState.parseResult }}
+    .error(v-if="sharedState.parseError !== ''")
+      | {{ sharedState.parseError }}
+    .descriptions(v-else)
+      .description(v-for="description in sharedState.parseResult")
+        | {{ description.prefix }}
+        span(:class="description.color") {{ description.content }}
+        span(v-if="description.text", :class="text") {{ description.text }}
+        span(v-if="description.option", :class="option") {{ description.option }}
   toolbar(position="bottom")
     el-button(type="text", size="mini", @click="copy")
       | イベントコマンド形式でクリップボードにコピー
@@ -64,4 +71,22 @@ export default class EditorResult extends Vue {
     &::-webkit-scrollbar-thumb 
       background-color: rgba(95, 95, 95, 0.5)
       border-radius: 5px
+    .screen
+      color: olive
+    .wait
+      color: crimson
+    .picture
+      color: purple
+    .audioVideo
+      color: teal
+    .changeBackground
+      color: deeppink
+    .system
+      color: dodgerblue
+    .message
+      color: indigo
+    .text
+      color: navy
+    .option
+      color: gray
 </style>
