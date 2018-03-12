@@ -211,15 +211,19 @@ const mode = {
   }, {
     token: 'symbol',
     regex: '%',
-    next:  'pluginCommand',
+    next: 'pluginCommand',
   }, {
     token: 'symbol',
     regex: '@',
-    next:  'command',
+    next: 'command',
+  }, {
+    token: 'comment',
+    regex: '//.*',
+    next: 'start',
   }, {
     token: 'text',
     regex: '[^>%@].*$',
-    next:  'start',
+    next: 'start',
   }],
   pluginCommand: [{
     token: 'command',

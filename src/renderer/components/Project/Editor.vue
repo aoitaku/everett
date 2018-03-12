@@ -85,6 +85,8 @@ export default class Editor extends Vue {
       color: #2196f3
     .cm-string
       color: #009688
+    .cm-comment
+      color: #aaaaaa
 
 </style>
 <style lang="sass" scoped>

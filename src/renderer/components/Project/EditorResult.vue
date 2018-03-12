@@ -7,8 +7,8 @@
       .description(v-for="description in sharedState.parseResult")
         | {{ description.prefix }}
         span(:class="description.color") {{ description.content }}
-        span(v-if="description.text", :class="text") {{ description.text }}
-        span(v-if="description.option", :class="option") {{ description.option }}
+        span(v-if="description.text", class="text") {{ description.text }}
+        span(v-if="description.option", class="option") {{ description.option }}
   toolbar(position="bottom")
     el-button(type="text", size="mini", @click="copy")
       | イベントコマンド形式でクリップボードにコピー

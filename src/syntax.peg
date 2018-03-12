@@ -5,7 +5,7 @@ Scenario = lines:Lines* {
   ], [])
 }
 
-Lines = Message / Command / PluginCommand / BlankLine
+Lines = Message / Command / PluginCommand / Comment / BlankLine
 
 Message = name:MessageCharacterName? text:Text+ {
   const [first, ...rest] = text
@@ -30,6 +30,10 @@ Message = name:MessageCharacterName? text:Text+ {
 
 Text = $(!Prefices) text:Chars Space* EndOfLine {
   return text
+}
+
+Comment = $CommentPrefix Chars EndOfLine {
+  return undefined
 }
 
 MessageCharacterName = $MessageCharacterPrefix text:Chars Space* EndOfLine {
@@ -342,10 +346,11 @@ BlendType = "normal" {
   return 3
 }
 
-Prefices = CommandPrefix / PluginCommandPrefix
+Prefices = CommandPrefix / PluginCommandPrefix / CommentPrefix
 MessageCharacterPrefix = GreaterThan Space*
 PluginCommandPrefix = Percent
 CommandPrefix = At
+CommentPrefix = "//"
 
 String = Quote chars:QuotedChar+ Quote {
   return chars.join('')
