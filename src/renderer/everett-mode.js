@@ -222,9 +222,9 @@ const mode = {
     next:  'start',
   }],
   pluginCommand: [{
-    token: ['command', 'text'],
-    regex: '([^ ]+)((?: *[^ ]+)* *)$',
-    next: 'start',
+    token: 'command',
+    regex: '([^ ]+)',
+    next: 'parameter',
   }],
   command: [{
     token: 'command',
