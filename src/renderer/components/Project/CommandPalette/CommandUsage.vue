@@ -14,7 +14,7 @@
       span(v-for="value in signature.value.slice(1)")
         | &ensp;|&nbsp;
         i(:class="valueType(value)") {{ value }}
-    span.tuple(v-if="signature.type === 'tuple'")
+    span.tuple(v-if="isTuple(signature.type)")
       span.operator [
       span
         i(:class="valueType(signature.value[0])") {{ signature.value[0] }}
@@ -26,6 +26,8 @@
       | (
       i(:class="valueType(signature.value)") {{ signature.value }}
       | )
+    span.single(v-if="signature.value === 'filename'")
+      i(class="filename") {{ signature.type }} file
     span.single(v-if="!signature.type")
       i(:class="valueType(signature.value)") {{ signature.value }}
 </template>
@@ -42,6 +44,17 @@ export default class CommandUsage extends Vue {
 
   @Prop()
   public signatures: IParameterSignature[]
+
+  public isTuple (type: string) {
+    switch (type) {
+    case 'color':
+    case 'tone':
+    case 'point':
+    case 'size':
+      return true
+    }
+    return false
+  }
 
   public valueType (value: string) {
     switch (value) {
@@ -81,5 +94,7 @@ export default class CommandUsage extends Vue {
   .attribute
     color: #2196f3
   .string
-    color: #009688
+    color: #3f51b5
+  .filename
+    color: #3f51b5
 </style>

@@ -84,7 +84,7 @@ export default class Editor extends Vue {
     .cm-attribute
       color: #2196f3
     .cm-string
-      color: #009688
+      color: #3f51b5
     .cm-comment
       color: #aaaaaa
 

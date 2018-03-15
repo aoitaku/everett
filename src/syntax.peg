@@ -285,7 +285,7 @@ PlayAudioParameters = name:String _*
   }]
 }
 
-ColorParameter = BracketOpen _* r:Number _+ g:Number _+ b:Number _+ a:Number _* BracketClose {
+ColorParameter = BracketOpen _* r:SignedNumber _+ g:SignedNumber _+ b:SignedNumber _+ a:SignedNumber _* BracketClose {
   return [r, g, b, a]
 }
 DurationParameter = "duration:" _* duration:Number {

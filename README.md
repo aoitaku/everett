@@ -21,7 +21,7 @@ npm run build
 
 Electron.js plugin is needed.
 
-Get Electron.js from [rpgmv-electron](https://github.com/RaTTiE/rpgmv-electron) and apply this plugin to your RPG MV Project
+Get Electron.js from [rpgmv-electron](https://github.com/RaTTiE/rpgmv-electron) and apply this plugin to your RPG MV Project.
 
 
 ---

@@ -48,7 +48,6 @@
         "portable"
       ]
     }
-
   },
   "dependencies": {
     "codemirror": "^5.35.0",

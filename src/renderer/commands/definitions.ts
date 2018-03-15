@@ -36,7 +36,7 @@ export interface ISingleParameterSignature {
 }
 
 export interface IMulitipleParameterSignature  { 
-  type: 'tuple'
+  type: 'tone' | 'color' | 'point' | 'size'
   value: string[]
   name?: string
 }
@@ -50,6 +50,7 @@ export interface ISelectParameterSignature  {
 export type IParameterSignature = IMulitipleParameterSignature | ISelectParameterSignature | ISingleParameterSignature
 
 export interface ICommandDescription {
+  title?: string
   content: string
   color: string
   text?: string
@@ -116,7 +117,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ウェイト（あり/なし）',
     ],
     parameterSignatures: [
-      { type: 'tuple', value: ['number', 'number', 'number', 'number'] },
+      { type: 'tone', value: ['number', 'number', 'number', 'number'] },
       { name: 'duration', value: 'number' },
       { value: 'wait', type: 'option' },
     ],
@@ -142,7 +143,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ウェイト（あり/なし）',
     ],
     parameterSignatures: [
-      { type: 'tuple', value: ['number', 'number', 'number', 'number'] },
+      { type: 'color', value: ['number', 'number', 'number', 'number'] },
       { name: 'duration', value: 'number' },
       { value: 'wait', type: 'option' },
     ],
@@ -219,15 +220,15 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '変数指定（する/しない）',
       '拡大率（幅,高さ）',
       '不透明度',
-      '合成方法(通常/加算/乗算/スクリーン)',
+      '合成方法（通常/加算/乗算/スクリーン）',
     ],
     parameterSignatures: [
       { value: 'number' },
-      { value: 'string' },
+      { value: 'filename', type: 'picture' },
       { type: 'select', value: ['topLeft', 'center'] },
-      { type: 'tuple', value: ['number', 'number'] },
+      { type: 'point', value: ['number', 'number'] },
       { value: 'byVariable', type: 'option' },
-      { name: 'scale', type: 'tuple', value: ['number', 'number'] },
+      { name: 'scale', type: 'size', value: ['number', 'number'] },
       { name: 'opacity', value: 'number' },
       { name: 'blend', type: 'select', value: ['normal', 'add', 'multiply', 'screen'] },
     ],
@@ -252,16 +253,16 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '座標（直接指定x,y/変数指定x,y）',
       '拡大率（幅,高さ）',
       '不透明度',
-      '合成方法(通常/加算/乗算/スクリーン)',
+      '合成方法（通常/加算/乗算/スクリーン）',
       '変更にかける時間（フレーム）',
       'ウェイト（あり/なし）',
     ],
     parameterSignatures: [
       { value: 'number' },
       { type: 'select', value: ['topLeft', 'center'] },
-      { type: 'tuple', value: ['number', 'number'] },
+      { type: 'point', value: ['number', 'number'] },
       { value: 'byVariable', type: 'option' },
-      { name: 'scale', type: 'tuple', value: ['number', 'number'] },
+      { name: 'scale', type: 'size', value: ['number', 'number'] },
       { name: 'opacity', value: 'number' },
       { name: 'blend', type: 'select', value: ['normal', 'add', 'multiply', 'screen'] },
       { name: 'duration', value: 'number' },
@@ -314,13 +315,13 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     ],
     parameterSignatures: [
       { value: 'number' },
-      { type: 'tuple', value: ['number', 'number', 'number', 'number'] },
+      { type: 'tone', value: ['number', 'number', 'number', 'number'] },
       { name: 'duration', value: 'number' },
       { value: 'wait', type: 'option' },
     ],
     example: '@tintPicture 1 [255 255 255 100] duration: 30 wait',
     describe ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
-      return `◆${this.title}：#${id}, (${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
+      return `@tintPicture ${id} ${color} duration: ${duration}${wait ? ' wait' : ''}`
     },
     description ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
       return {
@@ -392,7 +393,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '位相（正数:右/負数:左）',
     ],
     parameterSignatures: [
-      { value: 'string' },
+      { value: 'filename', type: 'bgm' },
       { name: 'volume', value: 'number' },
       { name: 'pitch', value: 'number' },
       { name: 'pan', value: 'number' },
@@ -478,7 +479,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '位相（正数:右/負数:左）',
     ],
     parameterSignatures: [
-      { value: 'string' },
+      { value: 'filename', type: 'bgs' },
       { name: 'volume', value: 'number' },
       { name: 'pitch', value: 'number' },
       { name: 'pan', value: 'number' },
@@ -526,7 +527,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '位相（正数:右/負数:左）',
     ],
     parameterSignatures: [
-      { value: 'string' },
+      { value: 'filename', type: 'me' },
       { name: 'volume', value: 'number' },
       { name: 'pitch', value: 'number' },
       { name: 'pan', value: 'number' },
@@ -553,7 +554,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '位相（正数:右/負数:左）',
     ],
     parameterSignatures: [
-      { value: 'string' },
+      { value: 'filename', type: 'se' },
       { name: 'volume', value: 'number' },
       { name: 'pitch', value: 'number' },
       { name: 'pan', value: 'number' },
@@ -596,7 +597,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       'ムービーファイル名',
     ],
     parameterSignatures: [
-      { value: 'string' },
+      { value: 'filename', type: 'movie' },
     ],
     example: '@playMovie "ファイル名"',
     describe ([file]: IPlayMovieCommand['parameters']) {
@@ -619,7 +620,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       '縦方向のループとスクロール量（数値:ループありで指定量スクロール/ループなし）',
     ],
     parameterSignatures: [
-      { value: 'string' },
+      { value: 'filename', type: 'parallaxes' },
       { name: 'loopX', type: 'select', value: ['false', 'number'] },
       { name: 'loopY', type: 'select', value: ['false', 'number'] },
     ],

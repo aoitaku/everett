@@ -2608,8 +2608,8 @@ electron@^1.7.5:
     extract-zip "^1.0.3"
 
 element-ui@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.2.0.tgz#e06afdf85a47ed6637b19046076d0dae8a7724d7"
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.2.1.tgz#9efb17a37d161b5cbca9998f3f217ccb4fa7da55"
   dependencies:
     async-validator "~1.8.1"
     babel-helper-vue-jsx-merge-props "^2.0.0"

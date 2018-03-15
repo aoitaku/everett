@@ -2805,7 +2805,7 @@ function peg$parse(input, options) {
         s3 = peg$parseSpace();
       }
       if (s2 !== peg$FAILED) {
-        s3 = peg$parseNumber();
+        s3 = peg$parseSignedNumber();
         if (s3 !== peg$FAILED) {
           s4 = [];
           s5 = peg$parseSpace();
@@ -2818,7 +2818,7 @@ function peg$parse(input, options) {
             s4 = peg$FAILED;
           }
           if (s4 !== peg$FAILED) {
-            s5 = peg$parseNumber();
+            s5 = peg$parseSignedNumber();
             if (s5 !== peg$FAILED) {
               s6 = [];
               s7 = peg$parseSpace();
@@ -2831,7 +2831,7 @@ function peg$parse(input, options) {
                 s6 = peg$FAILED;
               }
               if (s6 !== peg$FAILED) {
-                s7 = peg$parseNumber();
+                s7 = peg$parseSignedNumber();
                 if (s7 !== peg$FAILED) {
                   s8 = [];
                   s9 = peg$parseSpace();
@@ -2844,7 +2844,7 @@ function peg$parse(input, options) {
                     s8 = peg$FAILED;
                   }
                   if (s8 !== peg$FAILED) {
-                    s9 = peg$parseNumber();
+                    s9 = peg$parseSignedNumber();
                     if (s9 !== peg$FAILED) {
                       s10 = [];
                       s11 = peg$parseSpace();

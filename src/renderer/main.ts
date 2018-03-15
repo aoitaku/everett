@@ -1,7 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import { Button, Collapse, CollapseItem, Dialog, Input, Notification, Table, TableColumn, Tabs, TabPane } from 'element-ui'
-import locale from 'element-ui/lib/locale/lang/ja'
+import {
+  Button,
+  Collapse, CollapseItem,
+  Dialog,
+  Input,
+  Notification,
+  Table, TableColumn,
+  Tabs, TabPane,
+  Option,
+  Select,
+  Slider,
+  Switch,
+} from 'element-ui'
+import locale from 'element-ui/lib/locale'
+import lang from 'element-ui/lib/locale/lang/ja'
 import 'element-ui/lib/theme-chalk/index.css' 
 import App from './App.vue'
 import { router } from './router'
@@ -21,16 +34,20 @@ import './everett-mode'
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-Vue.prototype.$ELEMENT = { locale }
-Vue.use(Button)
-Vue.use(Collapse)
-Vue.use(CollapseItem)
-Vue.use(Dialog)
-Vue.use(Input)
-Vue.use(Table)
-Vue.use(TableColumn)
-Vue.use(Tabs)
-Vue.use(TabPane)
+locale.use(lang)
+Vue.component(Button.name, Button)
+Vue.component(Collapse.name, Collapse)
+Vue.component(CollapseItem.name, CollapseItem)
+Vue.component(Dialog.name, Dialog)
+Vue.component(Input.name, Input)
+Vue.component(Table.name, Table)
+Vue.component(TableColumn.name, TableColumn)
+Vue.component(Tabs.name, Tabs)
+Vue.component(TabPane.name, TabPane)
+Vue.component(Select.name, Select)
+Vue.component(Option.name, Option)
+Vue.component(Switch.name, Switch)
+Vue.component(Slider.name, Slider)
 Vue.component('icon', Icon)
 Vue.prototype.$notify = Notification
 
