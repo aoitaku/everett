@@ -31,6 +31,7 @@ export default class Editor extends Vue {
     })
     this.editor.setValue(this.sharedState.source)
     this.editor.on('change', this.inputChanged)
+    this.editor.on('blur', this.unfocused)
   }
 
   public inputChanged (codemirror: CodeMirror.Editor) {
@@ -40,6 +41,11 @@ export default class Editor extends Vue {
     }
     store.updateSource(codemirror.getValue())
     this.sharedState.edited = true
+  }
+
+  public unfocused (codemirror: CodeMirror.Editor) {
+    const cursors = document.querySelector('.CodeMirror-cursors') as HTMLElement
+    cursors.style.visibility = 'visible'
   }
 
   @Watch('source')
