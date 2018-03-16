@@ -1,7 +1,7 @@
 <template lang="pug">
 span.parameter-signature
+  | &ensp;
   span(v-if="signature.name")
-    | &ensp;
     span.attribute {{ signature.name }}
     span.operator :
     | &nbsp;

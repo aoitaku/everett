@@ -1,7 +1,7 @@
 <template lang="pug">
 .command-help
   command-usage(:name="name", :signatures="parameterSignatures")
-  command-example(:item="item", :values="values")
+  command-preview(:item="item", :values="values")
   .cog(v-for="(signature, index) in parameterSignatures", :key="index")
     el-select(v-if="signature.type === 'select'", v-model="values[index]", size="small", placeholder="選択してください", no-data-text="データなし")
       el-option(v-for="value in signature.value", :value="value", :key="`${index}:${value}`")
@@ -10,9 +10,12 @@
       .preview
         .layer.flash
         img(src="~@/assets/printertest.png")
-    .tone(v-if="signature.type === 'tone'")
     .point(v-if="signature.type === 'point'")
+      el-input
+      el-input
     .scale(v-if="signature.type === 'scale'")
+      el-input
+      el-input
     .option(v-if="signature.type === 'option'")
       el-switch(v-model="values[index]")
     el-select(v-if="signature.value === 'filename'", v-model="values[index]", size="small", placeholder="選択してください", no-data-text="データなし")
@@ -23,14 +26,14 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator';
 import CommandUsage from './CommandUsage.vue'
-import CommandExample from './CommandExample.vue'
+import CommandPreview from './CommandPreview.vue'
 import ToneEditor from './ToneEditor.vue'
 import { ICommandDefinition } from '../../../commands/definitions'
 
 @Component({
   components: {
     CommandUsage,
-    CommandExample,
+    CommandPreview,
     ToneEditor,
   }
 })
@@ -43,7 +46,7 @@ export default class CommandHelp extends Vue {
   }})
   public item: ICommandDefinition
 
-  public values: { [key: string]: string } = {}
+  public values: { [key: string]: string | string[] } = {}
 
   public get name () {
     return this.item.name

@@ -18,7 +18,7 @@ import { Component, Prop, Watch } from 'vue-property-decorator'
 export default class ToneEditor extends Vue {
 
   @Prop()
-  public value: string
+  public value: string[]
 
   public tone: [number, number, number, number] = [0, 0, 0, 0]
 
@@ -64,7 +64,7 @@ export default class ToneEditor extends Vue {
     this.fill(context2d, 'lighter', `rgb(${rgb2.join(', ')})`, width, height)
     this.fill(context2d, 'difference', 'white', width, height)
 
-    this.$emit('input', this.tone.join(' '))
+    this.$emit('input', this.tone)
   }
 }
 </script>
