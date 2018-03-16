@@ -8,6 +8,7 @@ import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
 import CodeMirror from 'codemirror'
 import { store } from '../../store'
+import EventBus from '../../event-bus'
 
 @Component
 export default class Editor extends Vue {
@@ -23,11 +24,14 @@ export default class Editor extends Vue {
     return this.$refs.codemirror as HTMLTextAreaElement
   }
 
+  public created () {
+    EventBus.$on('insert-command-clicked', this.insertCommand)
+  }
+
   public mounted () {
     this.editor = CodeMirror.fromTextArea(this.textarea, {
       mode: 'everett',
       lineNumbers: true,
-      lineWrapping: true,
     })
     this.editor.setValue(this.sharedState.source)
     this.editor.on('change', this.inputChanged)
@@ -58,41 +62,49 @@ export default class Editor extends Vue {
       this.editor.scrollTo(left, top)
     }
   }
+
+  public insertCommand (command: string) {
+    const doc = this.editor.getDoc()
+    const cursor = doc.getCursor()
+    doc.replaceRange(`${command}\n`, CodeMirror.Pos(cursor.line, 0))
+    const { left, top } = this.editor.cursorCoords(cursor, 'local')
+    this.editor.scrollTo(left, top)
+  }
 }
 </script>
 
 <style lang="sass">
-.project
-  .editor
-    .CodeMirror-wrap
-      height: 100%
-      .CodeMirror-vscrollbar
-        &::-webkit-scrollbar
-          width: 5px
-        &::-webkit-scrollbar-track 
-          background-color: #eee
-        &::-webkit-scrollbar-thumb 
-          background-color: rgba(95, 95, 95, 0.5)
-          border-radius: 5px
-      .CodeMirror-code
-        font-size: 14px
-        font-family: Menlo, Monaco, Consolas, "Courier New", "メイリオ", monospace
-    .cm-operator
-      color: #3f51b5
-    .cm-symbol
-      color: #F44336
-    .cm-command
-      color: #2196f3
-    .cm-number
-      color: #F44336
-    .cm-keyword
-      color: #009688
-    .cm-attribute
-      color: #2196f3
-    .cm-string
-      color: #3f51b5
-    .cm-comment
-      color: #aaaaaa
+.editor
+  .CodeMirror,
+  .CodeMirror-wrap
+    height: 100%
+    .CodeMirror-vscrollbar
+      &::-webkit-scrollbar
+        width: 5px
+      &::-webkit-scrollbar-track 
+        background-color: #eee
+      &::-webkit-scrollbar-thumb 
+        background-color: rgba(95, 95, 95, 0.5)
+        border-radius: 5px
+    .CodeMirror-code
+      font-size: 14px
+      font-family: Menlo, Monaco, Consolas, "Courier New", "メイリオ", monospace
+  .cm-operator
+    color: #3f51b5
+  .cm-symbol
+    color: #F44336
+  .cm-command
+    color: #2196f3
+  .cm-number
+    color: #F44336
+  .cm-keyword
+    color: #009688
+  .cm-attribute
+    color: #2196f3
+  .cm-string
+    color: #3f51b5
+  .cm-comment
+    color: #aaaaaa
 
 </style>
 <style lang="sass" scoped>

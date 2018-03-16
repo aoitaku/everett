@@ -25,10 +25,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { remote } from 'electron'
 import { Component, Prop } from 'vue-property-decorator';
 import { ICommandDefinition } from '../../../commands/definitions'
 import Parameter from './Parameter.vue'
+import EventBus from '../../../event-bus'
 
 @Component({
   components: {
@@ -80,12 +80,7 @@ export default class CommandPreview extends Vue {
   }
 
   public insertCommandClicked () {
-    remote.clipboard.writeText(this.example)
-    this.$notify({
-      title: 'クリップボードにコピーしました',
-      message: 'シナリオエディター上に貼り付けることができます',
-      type: 'success'
-    })
+    EventBus.$emit('insert-command-clicked', this.example)
   }
 
   public type (type: string) {
