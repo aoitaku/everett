@@ -3,8 +3,8 @@
   .header
     p コマンドプレビュー
     el-button(type="text", @click="insertCommandClicked")
-      icon(name="clipboard")
-      | コピー
+      icon(name="code")
+      | エディタにコピー
   .code(ref="code")
     span.symbol @
     span.command {{ item.name }}
@@ -119,7 +119,7 @@ export default class CommandPreview extends Vue {
         width: auto
         vertical-align: middle
         height: 1.2em
-        margin: -0.1em 0.3em 0 0.5em
+        margin: -0.2em 0.3em 0.1em 0.5em
   .code
     font-family: "Menlo", "consolas", monospace
     .operator
