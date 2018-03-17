@@ -5,11 +5,8 @@
   .cog(v-for="(signature, index) in parameterSignatures", :key="index")
     el-select(v-if="signature.type === 'select'", v-model="values[index]", size="small", placeholder="選択してください", no-data-text="データなし")
       el-option(v-for="value in signature.value", :value="value", :key="`${index}:${value}`")
+    color-editor(v-if="signature.type === 'color'", v-model="values[index]")
     tone-editor(v-if="signature.type === 'tone'", v-model="values[index]")
-    .color(v-if="signature.type === 'color'")
-      .preview
-        .layer.flash
-        img(src="~@/assets/printertest.png")
     .point(v-if="signature.type === 'point'")
       el-input
       el-input
@@ -27,6 +24,7 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator';
 import CommandUsage from './CommandUsage.vue'
 import CommandPreview from './CommandPreview.vue'
+import ColorEditor from './ColorEditor.vue'
 import ToneEditor from './ToneEditor.vue'
 import { ICommandDefinition } from '../../../commands/definitions'
 
@@ -34,6 +32,7 @@ import { ICommandDefinition } from '../../../commands/definitions'
   components: {
     CommandUsage,
     CommandPreview,
+    ColorEditor,
     ToneEditor,
   }
 })
