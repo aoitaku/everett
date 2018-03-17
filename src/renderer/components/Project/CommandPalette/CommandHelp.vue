@@ -46,7 +46,7 @@ export default class CommandHelp extends Vue {
   }})
   public item: ICommandDefinition
 
-  public values: { [key: string]: string | string[] } = {}
+  public values: { [key: string]: string | number[] | number | boolean } = {}
 
   public get name () {
     return this.item.name
@@ -58,6 +58,26 @@ export default class CommandHelp extends Vue {
 
   public get parameterSignatures () {
     return this.item.parameterSignatures
+  }
+
+  public created () {
+    this.values = this.item.parameterSignatures.reduce((prev, signature, index) => {
+      switch (signature.type) {
+      case 'tone':
+        return { ...prev, [index]: [0, 0, 0, 0] }
+      case 'color':
+        return { ...prev, [index]: [255, 255, 255, 170] }
+      case 'point':
+      case 'size':
+        return { ...prev, [index]: [0, 0] }
+      case 'select':
+        return { ...prev, [index]: signature.value[0] }
+      case 'option':
+        return { ...prev, [index]: false }
+      default:
+        return { ...prev, [index]: 0 }
+      }
+    }, this.values)
   }
 }
 </script>

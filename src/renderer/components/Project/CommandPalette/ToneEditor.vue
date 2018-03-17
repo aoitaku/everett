@@ -1,10 +1,10 @@
 <template lang="pug">
 .tone-editor
   .input
-    el-slider(v-model="tone[0]",  :min="-255", :max="255", show-input)
-    el-slider(v-model="tone[1]", :min="-255", :max="255", show-input)
-    el-slider(v-model="tone[2]", :min="-255", :max="255", show-input)
-    el-slider(v-model="tone[3]", :min="0", :max="255", show-input)
+    slider(v-model="tone[0]",  :min="-255", :max="255", show-input)
+    slider(v-model="tone[1]", :min="-255", :max="255", show-input)
+    slider(v-model="tone[2]", :min="-255", :max="255", show-input)
+    slider(v-model="tone[3]", :min="0", :max="255", show-input)
   .preview
     img(ref="image", src="~@/assets/printertest.png")
     canvas(ref="canvas")
@@ -13,12 +13,17 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop, Watch } from 'vue-property-decorator'
+import Slider from './Slider.vue'
 
-@Component
+@Component({
+  components: {
+    Slider,
+  },
+})
 export default class ToneEditor extends Vue {
 
   @Prop()
-  public value: string[]
+  public value: [number, number, number, number]
 
   public tone: [number, number, number, number] = [0, 0, 0, 0]
 
@@ -28,6 +33,10 @@ export default class ToneEditor extends Vue {
 
   public get image () {
     return this.$refs.image as HTMLImageElement
+  }
+
+  public created () {
+    this.tone = [...this.value] as [number, number, number, number]
   }
 
   public fill (context: CanvasRenderingContext2D, blend: string, color: string, width: number, height: number) {
@@ -92,53 +101,4 @@ export default class ToneEditor extends Vue {
       right: 0
       bottom: 0
       margin: 1px
-</style>
-
-<style lang="sass">
-.tone-editor
-  .input
-    .el-slider__input
-      width: 56px
-      height: 28px
-      line-height: 26px
-      input
-        height: 28px
-        font-size: 11px
-        padding-right: 20px
-        padding-left: 2px
-      .el-input-number__increase
-        position: absolute
-        z-index: 1
-        top: 1px
-        width: 20px
-        height: auto
-        text-align: center
-        background: #f5f7fa
-        color: #606266
-        cursor: pointer
-        font-size: 11px
-        line-height: 13px
-        border-left: 1px solid #dcdfe6
-        border-bottom: 1px solid #dcdfe6
-        border-radius: 0 4px 0 0
-      .el-input-number__decrease
-        position: absolute
-        z-index: 1
-        right: 1px
-        top: auto
-        left: auto
-        bottom: 1px
-        width: 20px
-        height: auto
-        text-align: center
-        background: #f5f7fa
-        color: #606266
-        cursor: pointer
-        font-size: 11px
-        line-height: 13px
-        border-right: none
-        border-left: 1px solid #dcdfe6
-        border-radius: 0 0 4px 0
-    .el-slider__runway.show-input
-      margin: 14px 72px 14px 11px
 </style>

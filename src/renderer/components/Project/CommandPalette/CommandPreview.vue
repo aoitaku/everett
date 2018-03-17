@@ -8,18 +8,18 @@
   .code(ref="code")
     span.symbol @
     span.command {{ item.name }}
-    span.parameterSignature(v-for="value in valuesWithDefaults")
+    span.parameterSignature(v-for="parameter in normalizedValues")
       | &ensp;
-      span(v-if="value.name")
-        span.attribute {{ value.name }}
+      span(v-if="parameter.name")
+        span.attribute {{ parameter.name }}
         span.operator :
         | &ensp;
-      parameter(v-if="typeof value.value === 'string'" :value="value.value") {{ value.value }}
+      parameter(v-if="typeof parameter.value === 'string'" :value="parameter.value") {{ parameter.value }}
       span(v-else)
         | [
-        span(v-for="(v, i) in value.value")
-          span(v-if="i > 0") &ensp;
-          parameter(:value="v") {{ v }}
+        span(v-for="(value, index) in parameter.value")
+          span(v-if="index > 0") &ensp;
+          parameter(:value="value") {{ value }}
         | ]
 </template>
 
@@ -50,7 +50,7 @@ export default class CommandPreview extends Vue {
     return ((this.$refs.code as HTMLElement).textContent || '').replace(/\s+/g, ' ')
   }
 
-  public get valuesWithDefaults () {
+  public get normalizedValues () {
     return this.parameterSignatures.map ((signature, index) => {
       let value: string | string[] | null = null
       switch (this.type(signature.type || '')) {
