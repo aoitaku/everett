@@ -1,8 +1,10 @@
 <template lang="pug">
 span.select-value
-  span(v-for="value, index in values")
-    span(v-if="index > 0") &ensp;|&nbsp;
-    value(:value="value") {{ value }}
+  | {&nbsp;
+  template(v-for="keyword, index in value[1].values")
+    template(v-if="index > 0") &ensp;|&nbsp;
+    value(:value="keyword.value") {{ keyword.value }}
+  | &nbsp;}
 </template>
 
 <script lang="ts">
@@ -15,6 +17,6 @@ import Value from './Value.vue'
 })
 export default class SelectValue extends Vue {
   @Prop()
-  public values: string[]
+  public value: ['keyword', { values: { value: string }[]}]
 }
 </script>

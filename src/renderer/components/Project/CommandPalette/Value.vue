@@ -16,6 +16,7 @@ export default class Value extends Vue {
     switch (this.value) {
     case 'filename':
     case 'string':
+    case 'variable':
     case 'number':
       return this.value
     default:
@@ -27,6 +28,8 @@ export default class Value extends Vue {
 
 <style lang="sass" scoped>
 .string
+  color: #3f51b5
+.variable
   color: #3f51b5
 .number
   color: #F44336

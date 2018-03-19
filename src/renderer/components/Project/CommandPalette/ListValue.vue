@@ -1,9 +1,9 @@
 <template lang="pug">
 span.list-value
   span.operator [
-  span(v-for="(value, index) in values")
-    span(v-if="index > 0") &nbsp;
-    value(:value="value") {{ value }}
+  template(v-for="(value, index) in values")
+    template(v-if="index > 0") &nbsp;
+    value(:value="value[0]") {{ value[0] }}
   span.operator ]
 </template>
 
@@ -17,7 +17,7 @@ import Value from './Value.vue'
 })
 export default class ListValue extends Vue {
   @Prop()
-  public values: string[]
+  public values: ['number', any][]
 }
 </script>
 

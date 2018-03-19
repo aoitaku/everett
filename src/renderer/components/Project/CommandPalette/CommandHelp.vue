@@ -2,21 +2,14 @@
 .command-help
   command-usage(:name="name", :signatures="parameterSignatures")
   command-preview(:item="item", :values="values")
-  .cog(v-for="(signature, index) in parameterSignatures", :key="index")
-    el-select(v-if="signature.type === 'select'", v-model="values[index]", size="small", placeholder="選択してください", no-data-text="データなし")
-      el-option(v-for="value in signature.value", :value="value", :key="`${index}:${value}`")
-    color-editor(v-if="signature.type === 'color'", v-model="values[index]")
-    tone-editor(v-if="signature.type === 'tone'", v-model="values[index]")
-    .point(v-if="signature.type === 'point'")
-      el-input
-      el-input
-    .scale(v-if="signature.type === 'scale'")
-      el-input
-      el-input
-    .option(v-if="signature.type === 'option'")
-      el-switch(v-model="values[index]")
-    el-select(v-if="signature.value === 'filename'", v-model="values[index]", size="small", placeholder="選択してください", no-data-text="データなし")
-    el-input(v-if="!signature.type", size="small", v-model="values[index]")
+  .row(v-for="(signature, index) in parameterSignatures", :key="index")
+    command-form(v-if="isSingleInput(signature.type)", v-model="values[index]", :signature="signature")
+    template(v-else-if="signature.type === 'or'")
+      .label {{ signature.label }}
+      el-radio-group(v-model="values[index][0]")
+        el-radio-button(v-for="value in signature.values", :label="value.key", :key="value.key || 'default'") {{ value.label }}
+      .row(v-for="(value, i) in signature.values")
+        command-form(v-model="values[index][1][value.key || 'default']", :signature="value", :show-label="false", :style="{ display: (value.key || 'default') === (values[index][0] || 'default') ? 'block' : 'none' }")
 </template>
 
 <script lang="ts">
@@ -24,17 +17,18 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator';
 import CommandUsage from './CommandUsage.vue'
 import CommandPreview from './CommandPreview.vue'
-import ColorEditor from './ColorEditor.vue'
-import ToneEditor from './ToneEditor.vue'
-import { ICommandDefinition } from '../../../commands/definitions'
+import CommandForm from './CommandForm.vue'
+import Slider from './Slider.vue'
+import { ICommandDefinition, IParameterSignature } from '../../../commands/definitions'
+import { store } from '../../../store'
 
 @Component({
   components: {
     CommandUsage,
     CommandPreview,
-    ColorEditor,
-    ToneEditor,
-  }
+    CommandForm,
+    Slider,
+  },
 })
 export default class CommandHelp extends Vue {
   @Prop({ default: {
@@ -45,7 +39,7 @@ export default class CommandHelp extends Vue {
   }})
   public item: ICommandDefinition
 
-  public values: { [key: string]: string | number[] | number | boolean } = {}
+  public values: { [key: number]: string | number | number[] | boolean } = {}
 
   public get name () {
     return this.item.name
@@ -55,27 +49,64 @@ export default class CommandHelp extends Vue {
     return this.item.title
   }
 
+  public get files () {
+    return store.state.files
+  }
+
   public get parameterSignatures () {
     return this.item.parameterSignatures
   }
 
+  public isSingleInput (type: string) {
+    switch (type) {
+    case 'select':
+    case 'optional':
+    case 'filename':
+    case 'vector':
+    case 'tone':
+    case 'color':
+    case 'volume':
+    case 'number':
+      return true
+    }
+    return false
+  } 
+
+  public defaultValueForSignature (signature: IParameterSignature): any {
+    switch (signature.type) {
+    case 'tone':
+    case 'color':
+    case 'vector':
+      return signature.values.map((value: [any, { default: number }]) => value[1].default)
+    case 'select':
+      return signature.value[1].values[0].value
+    case 'filename':
+      return null
+    case 'optional':
+      if (signature.value[1]) {
+        return [false, signature.value[1].default]
+      }
+      return [false, null]
+    case 'or':
+      const keyedValues = signature.values.filter(({ key }: IParameterSignature) => key)
+      return [undefined, {
+        default: this.defaultValueForSignature(signature.values[0]),
+        ...keyedValues.reduce((prev: { [key: string]: any }, keyedValue: IParameterSignature) => {
+          return {
+            ...prev,
+            [keyedValue.key]: this.defaultValueForSignature(keyedValue),
+          }
+        }, {})
+      }]
+    default:
+      return signature.value[1].default
+    }
+  }
+
   public created () {
     this.values = this.item.parameterSignatures.reduce((prev, signature, index) => {
-      switch (signature.type) {
-      case 'tone':
-        return { ...prev, [index]: [0, 0, 0, 0] }
-      case 'color':
-        return { ...prev, [index]: [255, 255, 255, 170] }
-      case 'point':
-      case 'size':
-        return { ...prev, [index]: [0, 0] }
-      case 'select':
-        return { ...prev, [index]: signature.value[0] }
-      case 'option':
-        return { ...prev, [index]: false }
-      default:
-        return { ...prev, [index]: 0 }
-      }
+      const defaultValue = this.defaultValueForSignature(signature)
+      return { ...prev, [index]: defaultValue }
     }, this.values)
   }
 }
@@ -84,6 +115,24 @@ export default class CommandHelp extends Vue {
 <style lang="sass" scoped>
 .command-help
   margin: 10px 10px 20px
-  .cog
+  .row
     margin: 8px 0
+    .label
+      vertical-align: middle
+      line-height: 24px
+      min-width: 86px
+      margin: 4px 8px 4px 2px
+      display: inline-block
 </style>
+
+<style lang="sass">
+.command-help
+  .option
+    .el-input-number
+      width: 214px
+      .el-input-group.el-input
+        display: inline-table
+        .el-input-group__prepend
+          padding: 0 10px
+</style>
+

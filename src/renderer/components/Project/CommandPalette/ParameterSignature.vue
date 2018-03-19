@@ -1,15 +1,28 @@
 <template lang="pug">
 span.parameter-signature
   | &ensp;
-  span(v-if="signature.name")
-    span.attribute {{ signature.name }}
-    span.operator :
-    | &nbsp;
-  select-value(v-if="type(signature.type) === 'select'", :values="signature.value")
-  list-value(v-else-if="type(signature.type) === 'list'", :values="signature.value")
-  optional-value(v-else-if="type(signature.type) === 'option'", :value="signature.value")
+  template(v-if="signature.type === 'optional'") (
+  template(v-if="signature.key")
+    span.attribute {{ signature.key }}
+    template(v-if="!signature.value || signature.value[0] !== 'true'")
+      span.operator :
+      | &nbsp;
+  select-value(v-if="type(signature.type) === 'select'", :value="signature.value")
+  span.value(v-else-if="type(signature.type) === 'or'")
+    | {&nbsp;
+    template(v-for="({ key, values}, index) in signature.values")
+      template(v-if="index > 0")
+        | &nbsp;|&ensp;
+      template(v-if="key")
+        span.attribute {{ key }}
+        span.operator :
+        | &nbsp;
+      list-value(:values="values")
+    | &nbsp;}
+  list-value(v-else-if="type(signature.type) === 'list'", :values="signature.values")
   span.value(v-else)
-    value(:value="signature.value") {{ signature | toValue }}
+    value(:value="signature.value[0]") {{ signature | toValue }}
+  template(v-if="signature.type === 'optional'") )
 </template>
 
 <script lang="ts">
@@ -18,22 +31,26 @@ import { Component, Prop } from 'vue-property-decorator';
 import { IParameterSignature } from '../../../commands/definitions'
 import ListValue from './ListValue.vue'
 import SelectValue from './SelectValue.vue'
-import OptionalValue from './OptionalValue.vue'
 import Value from './Value.vue'
 
 @Component({
   components: {
     ListValue,
     SelectValue,
-    OptionalValue,
     Value,
   },
   filters: {
     toValue (signature: IParameterSignature) {
-      if (signature.value === 'filename') {
-        return `"${signature.type} file"`
-      } else {
-        return signature.value
+      switch (signature.type) {
+      case 'optional':
+        if (signature.value[0] === 'true') {
+          return 
+        }
+        return signature.value[0]
+      case 'filename':
+        return `"${signature.value[1].name} file"`
+      default:
+        return signature.value[0]
       }
     }
   },
@@ -44,13 +61,13 @@ export default class ParameterSignature extends Vue {
 
   public type (type: string) {
     switch (type) {
+    case 'or':
     case 'select':
-    case 'option':
+    case 'optional':
       return type
     case 'color':
     case 'tone':
-    case 'point':
-    case 'size':
+    case 'vector':
       return 'list'
     default:
       return 'other'

@@ -29,28 +29,11 @@ function v (value: number) {
   return `{#${String(value).padStart(4, '0')}}`
 }
 
-export interface ISingleParameterSignature {
-  type?: string
-  value: string
-  name?: string
+export interface IParameterSignature {
+  [key: string]: any
 }
-
-export interface IMulitipleParameterSignature  { 
-  type: 'tone' | 'color' | 'point' | 'size'
-  value: string[]
-  name?: string
-}
-
-export interface ISelectParameterSignature  { 
-  type: 'select'
-  value: string[]
-  name?: string
-}
-
-export type IParameterSignature = IMulitipleParameterSignature | ISelectParameterSignature | ISingleParameterSignature
 
 export interface ICommandDescription {
-  title?: string
   content: string
   color: string
   text?: string
@@ -61,10 +44,7 @@ export interface ICommandDescription {
 export interface ICommandDefinition {
   name: string
   title: string
-  parameters: string[]
   parameterSignatures: IParameterSignature[]
-  example: string
-  describe (parameters: any[]): string
   description (parameters: any[]): ICommandDescription
 }
 
@@ -73,14 +53,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   221: {
     name: 'fadeoutScreen',
     title: '画面のフェードアウト',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@fadeoutScreen',
-    describe (parameters: IFadeoutScreenCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: IFadeoutScreenCommand['parameters']) {
       return {
         content: this.title,
@@ -92,14 +65,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   222: {
     name: 'fadeinScreen',
     title: '画面のフェードイン',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@fadeinScreen',
-    describe (parameters: IFadeinScreenCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: IFadeinScreenCommand['parameters']) {
       return {
         content: this.title,
@@ -111,20 +77,42 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   223: {
     name: 'tintScreen',
     title: '画面の色調変更',
-    parameters: [
-      '色（赤成分,緑成分,青成分,彩度）',
-      '効果時間（フレーム）',
-      'ウェイト（あり/なし）',
-    ],
     parameterSignatures: [
-      { type: 'tone', value: ['number', 'number', 'number', 'number'] },
-      { name: 'duration', value: 'number' },
-      { value: 'wait', type: 'option' },
+      {
+        type: 'tone',
+        values: [['number', {
+          min: -255,
+          max: 255,
+          default: 0,
+        }], ['number', {
+          min: -255,
+          max: 255,
+          default: 0,
+        }], ['number', {
+          min: -255,
+          max: 255,
+          default: 0,
+        }], ['number', {
+          min: 0,
+          max: 255,
+          default: 0,
+        }]],
+        label: '色調',
+      }, {
+        key: 'duration',
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: '効果時間（フレーム）'
+      }, {
+        key: 'wait',
+        type: 'optional',
+        value: ['true'],
+        label: '完了までウェイト'
+      },
     ],
-    example: '@tintScreen [255 255 255 100] duration: 30 wait',
-    describe ([color, duration, wait]: ITintScreenCommand['parameters']) {
-      return `◆${this.title}：(${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
-    },
     description ([color, duration, wait]: ITintScreenCommand['parameters']) {
       return {
         content: `${this.title}：(${[color].join()}), ${duration}フレーム`,
@@ -137,20 +125,43 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   224: {
     name: 'flashScreen',
     title: '画面のフラッシュ',
-    parameters: [
-      '色（赤成分,緑成分,青成分,明度）',
-      '効果時間（フレーム）',
-      'ウェイト（あり/なし）',
-    ],
     parameterSignatures: [
-      { type: 'color', value: ['number', 'number', 'number', 'number'] },
-      { name: 'duration', value: 'number' },
-      { value: 'wait', type: 'option' },
+      {
+        type: 'color',
+        value: ['number', 'number', 'number', 'number'],
+        values: [['number', {
+          min: 0,
+          max: 255,
+          default: 255,
+        }], ['number', {
+          min: 0,
+          max: 255,
+          default: 255,
+        }], ['number', {
+          min: 0,
+          max: 255,
+          default: 255,
+        }], ['number', {
+          min: 0,
+          max: 255,
+          default: 170,
+        }]],
+        label: '色',
+      }, {
+        key: 'duration',
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: '効果時間（フレーム）',
+      }, {
+        key: 'wait',
+        type: 'optional',
+        value: ['true'],
+        label: '完了までウェイト'
+      },
     ],
-    example: '@flashScreen [255 255 255 100] duration: 30 wait',
-    describe ([color, duration, wait]: IFlashScreenCommand['parameters']) {
-      return `◆${this.title}：(${[color].join()}), ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
-    },
     description ([color, duration, wait]: IFlashScreenCommand['parameters']) {
       return {
         content: `${this.title}：(${[color].join()}), ${duration}フレーム`,
@@ -163,22 +174,40 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   225: {
     name: 'shakeScreen',
     title: '画面のシェイク',
-    parameters: [
-      '強さ',
-      '速さ',
-      '効果時間（フレーム）',
-      'ウェイト（あり/なし）',
-    ],
     parameterSignatures: [
-      { name: 'force', value: 'number' },
-      { name: 'speed', value: 'number' },
-      { name: 'duration', value: 'number' },
-      { value: 'wait', type: 'option' },
+      {
+        key: 'force',
+        type: 'volume',
+        value: ['number', {
+          min: 1,
+          max: 9,
+          default: 5,
+        }],
+        label: '強さ',
+      }, {
+        key: 'speed',
+        type: 'volume',
+        value: ['number', {
+          min: 1,
+          max: 9,
+          default: 5,
+        }],
+        label: '速さ'
+      }, {
+        key: 'duration',
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: '効果時間（フレーム）',
+      }, {
+        key: 'wait',
+        type: 'optional',
+        value: ['true'],
+        label: '完了までウェイト'
+      },
     ],
-    example: '@shakeScreen force: 5 speed: 5 duration: 10 wait',
-    describe ([force, speed, duration, wait]: IShakeScreenCommand['parameters']) {
-      return `◆${this.title}：${force}, ${speed}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
-    },
     description ([force, speed, duration, wait]: IShakeScreenCommand['parameters']) {
       return {
         content: `${this.title}：${force}, ${speed}, ${duration}`,
@@ -191,16 +220,16 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   230: {
     name: 'wait',
     title: 'ウェイト',
-    parameters: [
-      'ウェイトの長さ（フレーム）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: 'ウェイトの長さ（フレーム）'
+      },
     ],
-    example: '@wait 30',
-    describe ([wait]: IWaitCommand['parameters']) {
-      return `◆${this.title}：${wait}フレーム`
-    },
     description ([wait]: IWaitCommand['parameters']) {
       return {
         content: `${this.title}：${wait}フレーム`,
@@ -212,33 +241,123 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   231: {
     name: 'showPicture',
     title: 'ピクチャの表示',
-    parameters: [
-      'ピクチャ番号',
-      'ピクチャファイル名',
-      '原点（左上/中央）',
-      '座標（x,y）',
-      '変数指定（する/しない）',
-      '拡大率（幅,高さ）',
-      '不透明度',
-      '合成方法（通常/加算/乗算/スクリーン）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
-      { value: 'filename', type: 'picture' },
-      { type: 'select', value: ['topLeft', 'center'] },
-      { type: 'point', value: ['number', 'number'] },
-      { value: 'byVariable', type: 'option' },
-      { name: 'scale', type: 'size', value: ['number', 'number'] },
-      { name: 'opacity', value: 'number' },
-      { name: 'blend', type: 'select', value: ['normal', 'add', 'multiply', 'screen'] },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 1,
+          max: 100,
+          default: 1,
+        }],
+        label: 'ピクチャ番号'
+      }, {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'img/pictures',
+          name: 'picture',
+        }],
+        label: 'ファイル名',
+      }, {
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'topLeft',
+            label: '左上',
+          }, {
+            value: 'center',
+            label: '中央',
+          }],
+        }],
+        label: '原点',
+      }, {
+        type: 'or',
+        values: [{
+          type: 'vector',
+          values: [
+            ['number', {
+              default: 0,
+              label: 'X座標',
+            }], ['number', {
+              default: 0,
+              label: 'Y座標',
+            }],
+          ],
+          label: '直接指定',
+        }, {
+          key: 'byVariables',
+          type: 'vector',
+          values: [
+            ['variable', {
+              default: 1,
+              label: 'X座標',
+            }], ['variable', {
+              default: 1,
+              label: 'Y座標',
+            }],
+          ],
+          label: '変数で指定',
+        }],
+        label: '座標',
+      }, {
+        key: 'scale',
+        type: 'vector',
+        values: [['number', {
+          default: 100,
+          label: '幅',
+        }], ['number', {
+          default: 100,
+          label: '高さ',
+        }]],
+        label: '拡大率',
+      }, {
+        key: 'opacity',
+        type: 'volume',
+        value: ['number', {
+          min: 0,
+          max: 255,
+          default: 255,
+        }],
+        label: '不透明度',
+      }, {
+        key: 'blend',
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'normal',
+            label: '通常',
+          }, {
+            value: 'add',
+            label: '加算',
+          }, {
+            value: 'multiply',
+            label: '乗算',
+          }, {
+            value: 'screen',
+            label: 'スクリーン',
+          }],
+        }],
+        label: '合成方法',
+      },
     ],
-    example: '@showPicture 1 "ファイル名" topLeft [0 0] byVariable scale: [100 100] opacity: 255 blend: normal',
-    describe ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend]: IShowPictureCommand['parameters']) {
-      return `◆${this.title}：#${id}, ${file}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}`
-    },
-    description ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend]: IShowPictureCommand['parameters']) {
+    description ([
+      id,
+      file,
+      origin,
+      byVariable, x, y,
+      scaleX, scaleY,
+      opacity,
+      blend
+    ]: IShowPictureCommand['parameters']) {
+      const parameters = [
+        `#${id}`,
+        file,
+        `${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y})`,
+        `(${scaleX}%,${scaleY}%)`,
+        opacity,
+        `${['通常', '加算', '乗算', 'スクリーン'][blend]}`,
+      ].join(', ')
       return {
-        content: `${this.title}：#${id}, ${file}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}`,
+        content: `${this.title}：${parameters}`,
         color: 'picture',
       }
     },
@@ -247,34 +366,130 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   232: {
     name: 'movePicture',
     title: 'ピクチャの移動',
-    parameters: [
-      'ピクチャ番号',
-      '原点（左上/中央）',
-      '座標（直接指定x,y/変数指定x,y）',
-      '拡大率（幅,高さ）',
-      '不透明度',
-      '合成方法（通常/加算/乗算/スクリーン）',
-      '変更にかける時間（フレーム）',
-      'ウェイト（あり/なし）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
-      { type: 'select', value: ['topLeft', 'center'] },
-      { type: 'point', value: ['number', 'number'] },
-      { value: 'byVariable', type: 'option' },
-      { name: 'scale', type: 'size', value: ['number', 'number'] },
-      { name: 'opacity', value: 'number' },
-      { name: 'blend', type: 'select', value: ['normal', 'add', 'multiply', 'screen'] },
-      { name: 'duration', value: 'number' },
-      { value: 'wait', type: 'option' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 1,
+          max: 100,
+          default: 1,
+        }],
+        label: 'ピクチャ番号'
+      }, {
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'topLeft',
+            label: '左上',
+          }, {
+            value: 'center',
+            label: '中央',
+          }],
+        }],
+        label: '原点',
+      }, {
+        type: 'or',
+        values: [{
+          type: 'vector',
+          values: [
+            ['number', {
+              default: 0,
+              label: 'X座標',
+            }], ['number', {
+              default: 0,
+              label: 'Y座標',
+            }],
+          ],
+          label: '直接指定',
+        }, {
+          key: 'byVariables',
+          type: 'vector',
+          values: [
+            ['variable', {
+              default: 1,
+              label: 'X座標',
+            }], ['variable', {
+              default: 1,
+              label: 'Y座標',
+            }],
+          ],
+          label: '変数で指定',
+        }],
+        label: '座標',
+      }, {
+        key: 'scale',
+        type: 'vector',
+        values: [['number', {
+          default: 100,
+          label: '幅',
+        }], ['number', {
+          default: 100,
+          label: '高さ',
+        }]],
+        label: '拡大率',
+      }, {
+        key: 'opacity',
+        type: 'volume',
+        value: ['number', {
+          min: 0,
+          max: 255,
+          default: 255,
+        }],
+        label: '不透明度',
+      }, {
+        key: 'blend',
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'normal',
+            label: '通常',
+          }, {
+            value: 'add',
+            label: '加算',
+          }, {
+            value: 'multiply',
+            label: '乗算',
+          }, {
+            value: 'screen',
+            label: 'スクリーン',
+          }],
+        }],
+        label: '合成方法',
+      }, {
+        key: 'duration',
+        type: 'value',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: '変更にかける時間（フレーム）',
+      }, {
+        key: 'wait',
+        type: 'optional',
+        value: ['true'],
+        label: '完了までウェイト',
+      },
     ],
-    example: '@movePicture 1 topLeft [0 0] byVariable scale: [-100 100] opacity: 255 blend: normal duration: 20 wait',
-    describe ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend, duration, wait]: IMovePictureCommand['parameters']) {
-      return `◆${this.title}：#${id}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
-    },
-    description ([id, file, origin, byVariable, x, y, scaleX, scaleY, opacity, blend, duration, wait]: IMovePictureCommand['parameters']) {
+    description ([
+      id,
+      file,
+      origin,
+      byVariable, x, y,
+      scaleX, scaleY,
+      opacity, blend,
+      duration,
+      wait
+    ]: IMovePictureCommand['parameters']) {
+      const parameters = [
+        `#${id}`,
+        `${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y})`,
+        `(${scaleX}%,${scaleY}%)`,
+        opacity,
+        `${['通常', '加算', '乗算', 'スクリーン'][blend]}`,
+        `${duration}フレーム`,
+      ].join(', ')
       return {
-        content: `${this.title}：#${id}, ${['左上', '中央'][origin]} (${byVariable ? v(x) : x},${byVariable ? v(y) : y}), (${scaleX}%,${scaleY}%), ${opacity}, ${['通常', '加算', '乗算', 'スクリーン'][blend]}, ${duration}フレーム`,
+        content: `${this.title}：${parameters}`,
         color: 'picture',
         option: wait ? ' (ウェイト)' : '',
       }
@@ -284,18 +499,25 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   233: {
     name: 'rotatePicture',
     title: 'ピクチャの回転',
-    parameters: [
-      'ピクチャ番号',
-      '回転速度（正数:反時計回り/負数:時計回り）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
-      { name: 'speed', value: 'number' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 1,
+          max: 100,
+          default: 1,
+        }],
+        label: 'ピクチャ番号'
+      },
+      {
+        key: 'speed',
+        type: 'number',
+        value: ['number', {
+          default: 0,
+        }],
+        label: '回転速度'
+      },
     ],
-    example: '@rotatePicture 1 speed:5',
-    describe ([id, speed]: IRotatePictureCommand['parameters']) {
-      return `◆${this.title}：#${id}, ${speed}`
-    },
     description ([id, speed]: IRotatePictureCommand['parameters']) {
       return {
         content: `${this.title}：#${id}, ${speed}`,
@@ -307,22 +529,50 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   234: {
     name: 'tintPicture',
     title: 'ピクチャの色調変更',
-    parameters: [
-      'ピクチャ番号',
-      '色（赤成分,緑成分,青成分,彩度）',
-      '変更にかける時間（フレーム）',
-      'ウェイト（あり/なし）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
-      { type: 'tone', value: ['number', 'number', 'number', 'number'] },
-      { name: 'duration', value: 'number' },
-      { value: 'wait', type: 'option' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 1,
+          max: 100,
+          default: 1,
+        }],
+        label: 'ピクチャ番号'
+      }, {
+        type: 'tone',
+        values: [['number', {
+          min: -255,
+          max: 255,
+          default: 0,
+        }], ['number', {
+          min: -255,
+          max: 255,
+          default: 0,
+        }], ['number', {
+          min: -255,
+          max: 255,
+          default: 0,
+        }], ['number', {
+          min: 0,
+          max: 255,
+          default: 0,
+        }]],
+        label: '色調',
+      }, {
+        key: 'duration',
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: '変更にかける時間（フレーム）',
+      }, {
+        key: 'wait',
+        type: 'optional',
+        value: ['true'],
+        label: '完了までウェイト'
+      },
     ],
-    example: '@tintPicture 1 [255 255 255 100] duration: 30 wait',
-    describe ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
-      return `@tintPicture ${id} ${color} duration: ${duration}${wait ? ' wait' : ''}`
-    },
     description ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
       return {
         content: `${this.title}：#${id}, (${[color].join()}), ${duration}フレーム`,
@@ -335,16 +585,17 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   235: {
     name: 'erasePicture',
     title: 'ピクチャの消去',
-    parameters: [
-      'ピクチャ番号',
-    ],
     parameterSignatures: [
-      { value: 'number' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 1,
+          max: 100,
+          default: 1,
+        }],
+        label: 'ピクチャ番号'
+      },
     ],
-    example: '@erasePicture 1',
-    describe ([id]: IErasePictureCommand['parameters']) {
-      return `◆${this.title}：#${id}`
-    },
     description ([id]: IErasePictureCommand['parameters']) {
       return {
         content: `${this.title}：#${id}`,
@@ -356,23 +607,49 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   236: {
     name: 'weather',
     title: '天候の設定',
-    parameters: [
-      '種類（なし/雨/嵐/雪）',
-      '強さ',
-      '効果時間（フレーム）',
-      'ウェイト（あり/なし）',
-    ],
     parameterSignatures: [
-      { type: 'select', value: ['rain', 'storm', 'snow', 'none'] },
-      { name: 'force', value: 'number' },
-      { name: 'duration', value: 'number' },
-      { value: 'wait', type: 'option' },
+      {
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'none',
+            label: 'なし',
+          }, {
+            value: 'rain',
+            label: '雨',
+          }, {
+            value: 'storm',
+            label: '嵐',
+          }, {
+            value: 'snow',
+            label: '雪',
+          }],
+          label: '種類',
+        }],
+      }, {
+        key: 'force',
+        type: 'volume',
+        value: ['number', {
+          min: 1,
+          max: 9,
+          default: 5,
+        }],
+        label: '強さ',
+      }, {
+        key: 'duration',
+        type: 'value',
+        value: ['number', {
+          min: 0,
+          default: 60,
+        }],
+        label: '変更にかける時間（フレーム）',
+      }, {
+        key: 'wait',
+        type: 'optional',
+        value: ['true'],
+        label: '完了までウェイト',
+      },
     ],
-    example: '@weather rain force: 5 duration: 30 wait',
-    describe ([type, force, duration, wait]: IWeatherCommand['parameters']) {
-      const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v)=> v).join(', ')
-      return `◆${this.title}：${weather}, ${duration}フレーム${wait ? ' (ウェイト)' : ''}`
-    },
     description ([type, force, duration, wait]: IWeatherCommand['parameters']) {
       const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v)=> v).join(', ')
       return {
@@ -386,22 +663,43 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   241: {
     name: 'playBGM',
     title: 'BGMの演奏',
-    parameters: [
-      'BGMファイル名',
-      '音量',
-      'ピッチ',
-      '位相（正数:右/負数:左）',
-    ],
     parameterSignatures: [
-      { value: 'filename', type: 'bgm' },
-      { name: 'volume', value: 'number' },
-      { name: 'pitch', value: 'number' },
-      { name: 'pan', value: 'number' },
+      {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'audio/bgm',
+          name: 'bgm',
+        }],
+        label: 'ファイル名',
+      }, {
+        key: 'volume',
+        type: 'volume',
+        value: ['number', {
+          min: 0,
+          max: 100,
+          default: 90,
+        }],
+        label: '音量',
+      }, {
+        key: 'pitch',
+        type: 'volume',
+        value: ['number', {
+          min: 50,
+          max: 150,
+          default: 100,
+        }],
+        label: 'ピッチ',
+      }, {
+        key: 'pan',
+        type: 'volume',
+        value: ['number', {
+          min: -100,
+          max: 100,
+          default: 0,
+        }],
+        label: '位相',
+      },
     ],
-    example: '@playBGM "ファイル名" volume: 90 pitch: 100 pan: 0',
-    describe ([{ name, volume, pitch, pan }]: IPlayBGMCommand['parameters']) {
-      return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
-    },
     description ([{ name, volume, pitch, pan }]: IPlayBGMCommand['parameters']) {
       return {
         content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
@@ -413,16 +711,16 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   242: {
     name: 'fadeoutBGM',
     title: 'BGMのフェードアウト',
-    parameters: [
-      'フェードアウトにかける時間（秒）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 3,
+        }],
+        label: 'フェードアウトにかける時間（秒）',
+      },
     ],
-    example: '@fadeoutBGM 3',
-    describe ([duration]: IFadeoutBGMCommand['parameters']) {
-      return `◆${this.title}：${duration}秒`
-    },
     description ([duration]: IFadeoutBGMCommand['parameters']) {
       return {
         content: `${this.title}：${duration}秒`,
@@ -434,14 +732,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   243: {
     name: 'saveBGM',
     title: 'BGMの保存',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@saveBGM',
-    describe (parameters: ISaveBGMCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: ISaveBGMCommand['parameters']) {
       return {
         content: this.title,
@@ -453,14 +744,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   244: {
     name: 'resumeBGM',
     title: 'BGMの再開',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@resumeBGM',
-    describe (parameters: IResumeBGMCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: IResumeBGMCommand['parameters']) {
       return {
         content: this.title,
@@ -472,22 +756,43 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   245: {
     name: 'playBGS',
     title: 'BGSの演奏',
-    parameters: [
-      'BGSファイル名',
-      '音量',
-      'ピッチ',
-      '位相（正数:右/負数:左）',
-    ],
     parameterSignatures: [
-      { value: 'filename', type: 'bgs' },
-      { name: 'volume', value: 'number' },
-      { name: 'pitch', value: 'number' },
-      { name: 'pan', value: 'number' },
+      {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'audio/bgs',
+          name: 'bgs',
+        }],
+        label: 'ファイル名',
+      }, {
+        key: 'volume',
+        type: 'volume',
+        value: ['number', {
+          min: 0,
+          max: 100,
+          default: 90,
+        }],
+        label: '音量',
+      }, {
+        key: 'pitch',
+        type: 'volume',
+        value: ['number', {
+          min: 50,
+          max: 150,
+          default: 100,
+        }],
+        label: 'ピッチ',
+      }, {
+        key: 'pan',
+        type: 'volume',
+        value: ['number', {
+          min: -100,
+          max: 100,
+          default: 0,
+        }],
+        label: '位相',
+      },
     ],
-    example: '@playBGS "ファイル名" volume: 90 pitch: 100 pan: 0',
-    describe ([{ name, volume, pitch, pan }]: IPlayBGSCommand['parameters']) {
-      return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
-    },
     description ([{ name, volume, pitch, pan }]: IPlayBGSCommand['parameters']) {
       return {
         content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
@@ -499,16 +804,16 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   246: {
     name: 'fadeoutBGS',
     title: 'BGSのフェードアウト',
-    parameters: [
-      'フェードアウトにかける時間（秒）',
-    ],
     parameterSignatures: [
-      { value: 'number' },
+      {
+        type: 'number',
+        value: ['number', {
+          min: 0,
+          default: 3,
+        }],
+        label: 'フェードアウトにかける時間（秒）',
+      },
     ],
-    example: '@fadeoutBGS 3',
-    describe ([duration]: IFadeoutBGSCommand['parameters']) {
-      return `◆${this.title}：${duration}秒`
-    },
     description ([duration]: IFadeoutBGSCommand['parameters']) {
       return {
         content: `${this.title}：${duration}秒`,
@@ -520,22 +825,43 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   249: {
     name: 'playME',
     title: 'MEの演奏',
-    parameters: [
-      'MEファイル名',
-      '音量',
-      'ピッチ',
-      '位相（正数:右/負数:左）',
-    ],
     parameterSignatures: [
-      { value: 'filename', type: 'me' },
-      { name: 'volume', value: 'number' },
-      { name: 'pitch', value: 'number' },
-      { name: 'pan', value: 'number' },
+      {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'audio/me',
+          name: 'me',
+        }],
+        label: 'ファイル名',
+      }, {
+        key: 'volume',
+        type: 'volume',
+        value: ['number', {
+          min: 0,
+          max: 100,
+          default: 90,
+        }],
+        label: '音量',
+      }, {
+        key: 'pitch',
+        type: 'volume',
+        value: ['number', {
+          min: 50,
+          max: 150,
+          default: 100,
+        }],
+        label: 'ピッチ',
+      }, {
+        key: 'pan',
+        type: 'volume',
+        value: ['number', {
+          min: -100,
+          max: 100,
+          default: 0,
+        }],
+        label: '位相',
+      },
     ],
-    example: '@playME "ファイル名" volume: 90 pitch: 100 pan: 0',
-    describe ([{ name, volume, pitch, pan }]: IPlayMECommand['parameters']) {
-      return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
-    },
     description ([{ name, volume, pitch, pan }]: IPlayMECommand['parameters']) {
       return {
         content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
@@ -547,22 +873,43 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   250: {
     name: 'playSE',
     title: 'SEの演奏',
-    parameters: [
-      'SEファイル名',
-      '音量',
-      'ピッチ',
-      '位相（正数:右/負数:左）',
-    ],
     parameterSignatures: [
-      { value: 'filename', type: 'se' },
-      { name: 'volume', value: 'number' },
-      { name: 'pitch', value: 'number' },
-      { name: 'pan', value: 'number' },
+      {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'audio/se',
+          name: 'se',
+        }],
+        label: 'ファイル名',
+      }, {
+        key: 'volume',
+        type: 'volume',
+        value: ['number', {
+          min: 0,
+          max: 100,
+          default: 90,
+        }],
+        label: '音量',
+      }, {
+        key: 'pitch',
+        type: 'volume',
+        value: ['number', {
+          min: 50,
+          max: 150,
+          default: 100,
+        }],
+        label: 'ピッチ',
+      }, {
+        key: 'pan',
+        type: 'volume',
+        value: ['number', {
+          min: -100,
+          max: 100,
+          default: 0,
+        }],
+        label: '位相',
+      },
     ],
-    example: '@playSE "ファイル名" volume: 90 pitch: 100 pan: 0',
-    describe ([{ name, volume, pitch, pan }]: IPlaySECommand['parameters']) {
-      return `◆${this.title}：${name} (${volume}, ${pitch}, ${pan})`
-    },
     description ([{ name, volume, pitch, pan }]: IPlaySECommand['parameters']) {
       return {
         content: `${this.title}：${name} (${volume}, ${pitch}, ${pan})`,
@@ -574,14 +921,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   251: {
     name: 'stopSE',
     title: 'SEの停止',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@stopSE',
-    describe (parameters: IStopSECommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: IStopSECommand['parameters']) {
       return {
         content: this.title,
@@ -593,16 +933,16 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   261: {
     name: 'playMovie',
     title: 'ムービーの再生',
-    parameters: [
-      'ムービーファイル名',
-    ],
     parameterSignatures: [
-      { value: 'filename', type: 'movie' },
+      {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'movies',
+          name: 'movie',
+        }],
+        label: 'ファイル名',
+      },
     ],
-    example: '@playMovie "ファイル名"',
-    describe ([file]: IPlayMovieCommand['parameters']) {
-      return `◆${this.title}：${file}`
-    },
     description ([file]: IPlayMovieCommand['parameters']) {
       return {
         content: this.title,
@@ -614,21 +954,34 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   284: {
     name: 'changeBackground',
     title: '遠景の変更',
-    parameters: [
-      '遠景ファイル名',
-      '横方向のループとスクロール量（数値:ループありで指定量スクロール/ループなし）',
-      '縦方向のループとスクロール量（数値:ループありで指定量スクロール/ループなし）',
-    ],
     parameterSignatures: [
-      { value: 'filename', type: 'parallaxes' },
-      { name: 'loopX', type: 'select', value: ['false', 'number'] },
-      { name: 'loopY', type: 'select', value: ['false', 'number'] },
+      {
+        type: 'filename',
+        value: ['filename', {
+          folder: 'img/parallaxes',
+          name: 'parallax',
+        }],
+        label: 'ファイル名',
+      },
+      {
+        key: 'loopX',
+        type: 'optional',
+        value: ['number', {
+          default: 0,
+          label: 'スクロール量',
+        }],
+        label: '横方向のループ',
+      },
+      {
+        key: 'loopY',
+        type: 'optional',
+        value: ['number', {
+          default: 0,
+          label: 'スクロール量',
+        }],
+        label: '縦方向のループ',
+      },
     ],
-    example: '@changeBackground "ファイル名" loopX: false loopY: 10',
-    describe ([file, loopX, loopY, sX, sY]: IChangeBackgroundCommand['parameters']) {
-      const loop = ` (${[loopX ? '横方向にループする' : null, loopY ? '縦方向にループする' : null].filter((v) => v).join(', ')})`
-      return `◆${this.title}：${file}${loopX || loopY ? loop : ''}`
-    },
     description ([file, loopX, loopY, sX, sY]: IChangeBackgroundCommand['parameters']) {
       const loop = ` (${[loopX ? '横方向にループする' : null, loopY ? '縦方向にループする' : null].filter((v) => v).join(', ')})`
       return {
@@ -642,14 +995,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   352: {
     name: 'save',
     title: 'セーブ画面を開く',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@save',
-    describe (parameters: ISaveCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: ISaveCommand['parameters']) {
       return {
         content: this.title,
@@ -661,14 +1007,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   353: {
     name: 'gameOver',
     title: 'ゲームオーバー',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@gameOver',
-    describe (parameters: IGameOverCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: IGameOverCommand['parameters']) {
       return {
         content: this.title,
@@ -680,14 +1019,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   354: {
     name: 'returnToTitle',
     title: 'タイトルに戻る',
-    parameters: [
-      'なし',
-    ],
     parameterSignatures: [],
-    example: '@returnToTitle',
-    describe (parameters: IReturnToTitleCommand['parameters']) {
-      return `◆${this.title}`
-    },
     description (parameters: IReturnToTitleCommand['parameters']) {
       return {
         content: this.title,

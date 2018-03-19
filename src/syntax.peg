@@ -262,13 +262,13 @@ position:PicturePositionParameter _+
     blend,
   ]
 }
-ChangeBackgroundParameters = name:String _*
-"loopX:" _* loopX:BackgroundLoopParameter _+
-"loopY:" _* loopY:BackgroundLoopParameter {
+ChangeBackgroundParameters = name:String
+loopX:(_+ "loopX:" _* val:BackgroundLoopParameter { return val })?
+loopY:(_+ "loopY:" _* val:BackgroundLoopParameter { return val })? {
   return [
     name,
-    loopX === false ? 0 : 1,
-    loopY === false ? 0 : 1,
+    loopX === null ? 0 : 1,
+    loopY === null ? 0 : 1,
     loopX === false ? 0 : loopX,
     loopY === false ? 0 : loopY,
   ]
@@ -297,7 +297,7 @@ WaitParameter = wait:(_+ "wait")? {
 PointParameter = BracketOpen _* x:SignedNumber _+ y:SignedNumber _* BracketClose {
   return [x, y]
 }
-PicturePositionParameter = position:PointParameter byVariable:(_+ "byVariable")? {
+PicturePositionParameter = byVariable:("byVariables:" _+)? position:PointParameter {
   return [byVariable ? 1 : 0, ...position]
 }
 BackgroundLoopParameter = SignedNumber / False

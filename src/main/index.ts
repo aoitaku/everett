@@ -2,8 +2,6 @@ import { app, BrowserWindow, ipcMain, IpcMessageEvent } from 'electron'
 import { promisify } from 'util'
 import * as fs from 'fs'
 
-console.log(process.versions)
-
 // Install `electron-debug` with `devtron`
 require('electron-debug')({ showDevTools: false })
 

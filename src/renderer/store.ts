@@ -7,6 +7,8 @@ import { ICommandDescription } from './commands/definitions'
 export interface ISharedState  {
   selectedProject: string | null
   selectedFile: string | null
+  files: { [key: string]: string[] }
+  variables: { [key: number]: string | number }
   eventDataJSON: string
   parseResult: ICommandDescription[]
   parseError: string
@@ -26,6 +28,8 @@ export const store: IStore = {
   state: {
     selectedProject: null,
     selectedFile: null,
+    files: {},
+    variables: {},
     eventDataJSON: '',
     parseResult: [],
     parseError: '',

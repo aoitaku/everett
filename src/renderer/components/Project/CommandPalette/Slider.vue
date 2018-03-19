@@ -1,10 +1,10 @@
 <template lang="pug">
-el-slider.slider(v-model="input", :min="min", :max="max", show-input)
+el-slider.slider(v-model="input", ref="slider", :min="min", :max="max", show-input)
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop, Watch } from 'vue-property-decorator';
+import { Component, Prop, Watch } from 'vue-property-decorator'
 
 @Component
 export default class Slider extends Vue {
@@ -19,7 +19,7 @@ export default class Slider extends Vue {
   @Prop()
   public max: number
 
-  public mounted () {
+  public created () {
     this.input = this.value
   }
 
@@ -57,6 +57,8 @@ export default class Slider extends Vue {
       border-left: 1px solid #dcdfe6
       border-bottom: 1px solid #dcdfe6
       border-radius: 0 4px 0 0
+      .el-icon-plus:before
+        content: "\E605"
     .el-input-number__decrease
       position: absolute
       z-index: 1
@@ -75,6 +77,8 @@ export default class Slider extends Vue {
       border-right: none
       border-left: 1px solid #dcdfe6
       border-radius: 0 0 4px 0
+      .el-icon-minus:before
+        content: "\E603"
   .el-slider__runway.show-input
     margin: 14px 72px 14px 11px
 </style>

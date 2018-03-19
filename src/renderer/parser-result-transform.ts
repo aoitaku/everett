@@ -78,26 +78,3 @@ export function resultDescriptions (result: IEventCommand[]): ICommandDescriptio
     }
   })
 }
-
-export function describeResult (result: IEventCommand[]) {
-  return result.map((command) => {
-    switch (command.code) {
-    case 101:
-      const [faceName, faceIndex, windowStyleValue, windowPositionValue] = command.parameters
-      const windowStyle = [
-        'ウィンドウ', '暗くする', '透明',
-      ][windowStyleValue]
-      const windowPosition = [
-        '上', '中', '下',
-      ][windowPositionValue]
-      return `◆文章：${faceName}(${faceIndex}), ${windowStyle}, ${windowPosition}`
-    case 401:
-      return `：　　：${command.parameters[0]}`
-    case 356:
-      return `◆プラグインコマンド：${command.parameters[0]}`
-    default:
-      const definition = commandDefinitions[command.code]
-      return definition.describe.call(definition, command.parameters)
-    }
-  }).join("\n")
-}

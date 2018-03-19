@@ -10,11 +10,14 @@
     span.command {{ item.name }}
     span.parameterSignature(v-for="parameter in normalizedValues")
       | &ensp;
-      span(v-if="parameter.name")
-        span.attribute {{ parameter.name }}
-        span.operator :
-        | &ensp;
-      parameter(v-if="typeof parameter.value === 'string'" :value="parameter.value") {{ parameter.value }}
+      span(v-if="parameter.key")
+        span(v-if="typeof parameter.value !== 'boolean'")
+          span.attribute {{ parameter.key }}
+          span.operator :
+          | &ensp;
+      parameter(v-if="typeof parameter.value === 'string' || typeof parameter.value === 'number'" :value="parameter.value") {{ parameter.value }}
+      span(v-else-if="typeof parameter.value === 'boolean'")
+        span.attribute(v-if="parameter.value") {{ parameter.key }}
       span(v-else)
         | [
         span(v-for="(value, index) in parameter.value")
@@ -46,22 +49,31 @@ export default class CommandPreview extends Vue {
     return this.item.parameterSignatures
   }
 
-  public get example () {
+  public example () {
     return ((this.$refs.code as HTMLElement).textContent || '').replace(/\s+/g, ' ')
   }
 
   public get normalizedValues () {
     return this.parameterSignatures.map ((signature, index) => {
-      let value: string | string[] | null = null
+      let key = signature.key
+      let value: string | string[] | boolean
       switch (this.type(signature.type || '')) {
       case 'select':
-        value = this.values[index] || signature.value[0]
+        value = this.values[index] || signature.value[1].values[0].value
         break
       case 'list':
-        value = this.values[index] || (signature.value as string[]).map(() => '0')
+        value = this.values[index] || signature.values.map(() => '0')
         break
-      case 'option':
-        value = this.values[index] ? signature.value : null
+      case 'or':
+        key = this.values[index][0]
+        value = this.values[index][1][key || 'default'] || signature.values[0].values.map(() => '0')
+        break
+      case 'optional':
+        if (this.values[index][0] && this.values[index][1] !== null) {
+          value = this.values[index][1]
+        } else {
+          value = this.values[index][0]
+        }
         break
       case 'filename':
         value = this.values[index] || '"ファイル名"'
@@ -69,9 +81,9 @@ export default class CommandPreview extends Vue {
       default:
         value = this.values[index] || '0'
       }
-      if (signature.name) {
+      if (key) {
         return {
-          name: signature.name,
+          key,
           value,
         }
       }
@@ -80,7 +92,7 @@ export default class CommandPreview extends Vue {
   }
 
   public insertCommandClicked () {
-    EventBus.$emit('insert-command-clicked', this.example)
+    EventBus.$emit('insert-command-clicked', this.example())
   }
 
   public type (type: string) {
@@ -90,14 +102,16 @@ export default class CommandPreview extends Vue {
     switch (type) {
     case 'color':
     case 'tone':
-    case 'point':
-    case 'size':
+    case 'vector':
       return 'list'
+    case 'or':
     case 'select':
-    case 'option':
+    case 'optional':
       return type
-    default:
+    case 'filename':
       return 'filename'
+    default:
+      return type
     }
   }
 }
@@ -121,6 +135,9 @@ export default class CommandPreview extends Vue {
         height: 1.2em
         margin: -0.2em 0.3em 0.1em 0.5em
   .code
+    text-indent: -0.5em
+    padding: 0 0 0 0.5em
+    height: 6em
     font-family: "Menlo", "consolas", monospace
     .operator
       color: #3f51b5

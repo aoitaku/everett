@@ -32,6 +32,7 @@ export default class Editor extends Vue {
     this.editor = CodeMirror.fromTextArea(this.textarea, {
       mode: 'everett',
       lineNumbers: true,
+      lineWrapping: true,
     })
     this.editor.setValue(this.sharedState.source)
     this.editor.on('change', this.inputChanged)

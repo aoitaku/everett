@@ -12,6 +12,7 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import path from 'path'
 import * as fs from 'fs'
+import { promisify } from 'util'
 import { store } from '../store'
 import CommandPalette from './Project/CommandPalette.vue'
 import EditorHeader from './Project/EditorHeader.vue'
@@ -33,25 +34,71 @@ export default class Project extends Vue {
     return this.sharedState.selectedProject
   }
 
-  public mounted () {
+  public get files () {
+    return store.state.files
+  }
+
+  public async mounted () {
     if (!this.selectedProject) {
       this.$router.push({ name: 'open-project' })
       return
     }
+    const projectDir = path.dirname(this.selectedProject)
+    const systemDataPath = (path.join(projectDir, 'data', 'System.json'))
+    const systemDataFile = await promisify(fs.readFile)(systemDataPath, 'utf-8')
+    const systemData = JSON.parse(systemDataFile)
     const title = document.title.split('-').slice(-1)[0].trim()
-    document.title = `${this.projectNameFromPath(this.selectedProject)} - ${title}`
+    if (systemData) {
+      document.title = `${systemData.gameTitle} (${projectDir}) - ${title}`
+      Vue.set(store.state, 'variables', {
+        ...store.state.variables,
+        ...systemData.variables.slice(1).reduce((prev: { [key:number]: string }, variableName: string, index: number) => {
+          return { ...prev, [index+1]: variableName }
+        }, {})
+      })
+    } else {
+      document.title = `(${projectDir}) - ${title}`      
+    }
+    const mediaList = [
+      {folder: 'img/pictures', name: 'picture'},
+      {folder: 'img/parallaxes', name: 'parallax'},
+      {folder: 'audio/bgm', name: 'bgm'},
+      {folder: 'audio/bgs', name: 'bgs'},
+      {folder: 'audio/me', name: 'me'},
+      {folder: 'audio/se', name: 'se'},
+      {folder: 'movies', name: 'movie'}
+    ]
+    mediaList.forEach((media) => this.prepareFilelist(media))
   }
 
-  private projectNameFromPath (projectPath: string) {
-    if (!projectPath) {
-      return ''
+  public async prepareFilelist (media: { folder: string, name: string }) {
+    if (!this.selectedProject) {
+      return
     }
-    const systemFile = fs.readFileSync(`${path.dirname(projectPath)}/data/system.json`, 'utf-8')
-    const systemData = JSON.parse(systemFile)
-    if (!systemData) {
-      return ''
+    if (this.files[media.name]) {
+      return
     }
-    return `${systemData.gameTitle} (${path.dirname(projectPath)})`
+    let ext: string
+    switch (media.name) {
+    case 'bgm':
+    case 'bgs':
+    case 'me':
+    case 'se':
+      ext = '.ogg'
+      break
+    case 'movie':
+      ext = '.webm'
+      break
+    default:
+      ext ='.png'
+    } 
+    const projectDir = path.dirname(this.selectedProject)
+    const dir = (path.join(projectDir, media.folder))
+    const files = await promisify(fs.readdir)(dir)
+    Vue.set(store.state, 'files', {
+      ...store.state.files,
+      [media.name]: files.filter((file) => path.extname(file) === ext).map((file) => path.basename(file, ext)),
+    })
   }
 }
 </script>
@@ -62,4 +109,5 @@ export default class Project extends Vue {
   .middle
     height: calc(100% - 40px)
     display: flex
+    jusitfy-content: stretch
 </style>
