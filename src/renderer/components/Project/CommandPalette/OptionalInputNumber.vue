@@ -1,7 +1,7 @@
 <template lang="pug">
 .optional-input-number
-  el-input-number(v-model="input", size="small", :disabled="!isActivated", controls-position="right")
-    el-switch(v-model="isActivated", slot="prepend")
+  el-input-number(v-model="input[1]", size="small", :disabled="!input[0]", controls-position="right")
+    el-switch(v-model="input[0]", slot="prepend")
 </template>
 
 <script lang="ts">
@@ -11,8 +11,7 @@ import { store } from '../../../store'
 
 @Component
 export default class OptionalInputNumber extends Vue {
-  public isActivated: boolean = false
-  public input: number | null = null
+  public input: [boolean, number | null] = [false, null]
 
   @Prop()
   public value: [boolean, number]
@@ -22,12 +21,12 @@ export default class OptionalInputNumber extends Vue {
   }
 
   public created () {
-    [this.isActivated, this.input] = this.value
+    this.input = this.value
   }
 
   @Watch('input')
   public updateInput () {
-    this.$emit('input', [this.isActivated, this.input])
+    this.$emit('input', this.input)
   }
 }
 </script>

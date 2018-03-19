@@ -15,7 +15,7 @@
           span.attribute {{ parameter.key }}
           span.operator :
           | &ensp;
-      parameter(v-if="typeof parameter.value === 'string' || typeof parameter.value === 'number'" :value="parameter.value") {{ parameter.value }}
+      parameter(v-if="typeof parameter.value === 'string' || typeof parameter.value === 'number'", :value="parameter.value") {{ parameter.value }}
       span(v-else-if="typeof parameter.value === 'boolean'")
         span.attribute(v-if="parameter.value") {{ parameter.key }}
       span(v-else)
