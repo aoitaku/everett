@@ -35,7 +35,7 @@ Comment = $CommentPrefix Chars EndOfLine {
   return undefined
 }
 
-MessageOption =  $CommandPrefix "message" _+ parameters:MessageParameters _* EndOfLine {
+MessageOption =  $CommandPrefix "showText" _+ parameters:MessageParameters _* EndOfLine {
   return parameters
 }
 
