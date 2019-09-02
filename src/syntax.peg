@@ -158,7 +158,7 @@ ParameterlessCommandName = "fadeoutScreen" {
   return 353
 } / "returnToTitle" {
   return 354
-} 
+}
 SingleNumberParameterCommandName = "wait" {
   return 230
 } / "erasePicture" {
@@ -223,7 +223,7 @@ ShowPictureParameters = id:Number _+ name:String _+ parameters:PictureParameters
     id,
     name,
     ...parameters,
-  ]  
+  ]
 }
 MovePictureParameters = id:Number _+
 parameters:PictureParameters _+
@@ -285,7 +285,12 @@ PlayAudioParameters = name:String _*
   }]
 }
 
-ColorParameter = BracketOpen _* r:SignedNumber _+ g:SignedNumber _+ b:SignedNumber _+ a:SignedNumber _* BracketClose {
+ColorParameter = BracketOpen _*
+r:SignedNumber _+
+g:SignedNumber _+
+b:SignedNumber _+
+a:SignedNumber _*
+BracketClose {
   return [r, g, b, a]
 }
 DurationParameter = "duration:" _* duration:Number {
@@ -294,7 +299,10 @@ DurationParameter = "duration:" _* duration:Number {
 WaitParameter = wait:(_+ "wait")? {
   return !!wait
 }
-PointParameter = BracketOpen _* x:SignedNumber _+ y:SignedNumber _* BracketClose {
+PointParameter = BracketOpen _*
+x:SignedNumber _+
+y:SignedNumber _*
+BracketClose {
   return [x, y]
 }
 PicturePositionParameter = byVariable:("byVariables:" _+)? position:PointParameter {
