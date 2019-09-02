@@ -332,73 +332,41 @@ PicturePositionParameter = byVariable:("byVariables:" _+)? position:PointParamet
 }
 BackgroundLoopParameter = SignedNumber / False
 
-WeatherType = "rain" {
+WeatherType = ("rain" / "雨") {
   return 0
-} / "storm" {
+} / ("storm" / "嵐") {
   return 1
-} / "snow" {
+} / ("snow" / "雪") {
   return 2
-} / "none" {
-  return 3
-} / "雨" {
-  return 0
-} / "嵐" {
-  return 1
-} / "雪" {
-  return 2
-} / "なし" {
+} / ("none" / "なし") {
   return 3
 }
-OriginType = "topLeft" {
+OriginType = ("topLeft" / "左上") {
   return 0
-} / "center" {
-  return 1
-} / "左上" {
-  return 0
-} / "中央" {
+} / ("center" / "中央") {
   return 1
 }
-BlendType = "normal" {
+BlendType = ("normal" / "通常") {
   return 0
-} / "add" {
+} / ("add" / "加算") {
   return 1
-} / "multiply" {
+} / ("multiply"　/ "乗算") {
   return 2
-} / "screen" {
-  return 3
-} / "通常" {
-  return 0
-} / "加算" {
-  return 1
-}　/ "乗算" {
-  return 2
-} / "スクリーン" {
+} / ("screen"/ "スクリーン") {
   return 3
 }
-MessageWindowBackground = "window" {
+MessageWindowBackground = ("window" / "ウィンドウ") {
   return 0
-} / "darken" {
+} / ("darken" / "暗くする") {
   return 1
-} / "transparent" {
-  return 2
-} / "ウィンドウ" {
-  return 0
-} / "暗くする" {
-  return 1
-} / "透明" {
+} / ("transparent" / "透明") {
   return 2
 }
-MessageWindowPosition = "top" {
+MessageWindowPosition = ("top" / "上") {
   return 0
-} / "center" {
+} / ("middle" / "中") {
   return 1
-} / "bottom" {
-  return 2
-} / "上" {
-  return 0
-} / "中" {
-  return 1
-} / "下" {
+} / ("bottom" / "下") {
   return 2
 }
 
