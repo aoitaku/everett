@@ -27,8 +27,7 @@ Message = name:MessageCharacterName? text:Text+ {
     }),
   ]
 }
-
-Text = $(!Prefices) text:Chars Space* EndOfLine {
+Text = $(!Prefices) text:Chars _* EndOfLine {
   return text
 }
 
@@ -36,7 +35,7 @@ Comment = $CommentPrefix Chars EndOfLine {
   return undefined
 }
 
-MessageCharacterName = $MessageCharacterPrefix text:Chars Space* EndOfLine {
+MessageCharacterName = $MessageCharacterPrefix text:Chars _* EndOfLine {
   return text
 }
 
