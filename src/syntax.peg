@@ -360,7 +360,7 @@ PluginCommandPrefix = Percent
 CommandPrefix = At
 CommentPrefix = "//"
 
-String = Quote chars:QuotedChar+ Quote {
+String = Quote chars:QuotedChar* Quote {
   return chars.join('')
 }
 Number = num:([0-9]+) {
