@@ -7,12 +7,12 @@ Scenario = lines:Lines* {
 
 Lines = Message / Command / PluginCommand / Comment / BlankLine
 
-Message = name:MessageCharacterName? text:Text+ {
+Message = option:MessageOption? name:MessageCharacterName? text:Text+ {
   const [first, ...rest] = text
   return [
     {
       code: 101,
-      parameters: []
+      parameters: option ? option : []
     },
   	{
       code: 401,
@@ -33,6 +33,10 @@ Text = $(!Prefices) text:Chars _* EndOfLine {
 
 Comment = $CommentPrefix Chars EndOfLine {
   return undefined
+}
+
+MessageOption =  $CommandPrefix "message" _+ parameters:MessageParameters _* EndOfLine {
+  return parameters
 }
 
 MessageCharacterName = $MessageCharacterPrefix text:Chars _* EndOfLine {
@@ -177,6 +181,16 @@ PlayAudioCommandName = "playBGM" {
   return 250
 }
 
+MessageParameters = face:("face:" _* val:FaceParameter　_+ { return val })?
+"window:" _* window:MessageWindowParameter {
+  return [...(face ? face : ["", 0]), ...window]
+}
+MessageWindowParameter =  BracketOpen _*
+background:MessageWindowBackground _+
+poisition:MessageWindowPosition _*
+BracketClose {
+  return [background, poisition]
+}
 TintParameters = color:ColorParameter _+
 duration:DurationParameter
 wait:WaitParameter {
@@ -284,6 +298,15 @@ PlayAudioParameters = name:String _*
   }]
 }
 
+FaceParameter = BracketOpen _*
+name:String _+
+index:SignedNumber _*
+BracketClose {
+  return [name, index]
+} / "なし" {
+  return ["", 0]
+}
+
 ColorParameter = BracketOpen _*
 r:SignedNumber _+
 g:SignedNumber _+
@@ -352,8 +375,34 @@ BlendType = "normal" {
 } / "スクリーン" {
   return 3
 }
+MessageWindowBackground = "window" {
+  return 0
+} / "darken" {
+  return 1
+} / "transparent" {
+  return 2
+} / "ウィンドウ" {
+  return 0
+} / "暗くする" {
+  return 1
+} / "透明" {
+  return 2
+}
+MessageWindowPosition = "top" {
+  return 0
+} / "center" {
+  return 1
+} / "bottom" {
+  return 2
+} / "上" {
+  return 0
+} / "中" {
+  return 1
+} / "下" {
+  return 2
+}
 
-Prefices = CommandPrefix / PluginCommandPrefix / CommentPrefix
+Prefices = CommandPrefix / PluginCommandPrefix / MessageCharacterPrefix / CommentPrefix
 MessageCharacterPrefix = GreaterThan Space*
 PluginCommandPrefix = Percent
 CommandPrefix = At
