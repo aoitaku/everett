@@ -27,8 +27,10 @@ Message = option:MessageOption? name:MessageCharacterName? text:Text+ {
     }),
   ]
 }
-Text = $(!Prefices) text:Chars _* EndOfLine {
+Text = $(!Prefices) Tilde? text:Chars _* EndOfLine {
   return text
+} / Tilde EndOfLine {
+  return ""
 }
 
 Comment = $CommentPrefix Chars EndOfLine {
@@ -53,6 +55,7 @@ Command = $CommandPrefix command:_Command _* EndOfLine {
 
 _Command = ParameterlessCommand
 / SingleNumberParameterCommand
+/ SwitchCommand
 / TintCommand
 / FlashCommand
 / ShakeCommand
@@ -72,6 +75,30 @@ ParameterlessCommand = code:ParameterlessCommandName {
   }
 }
 
+SwitchCommand = "switch" _+ numberFrom:Number
+numberTo:(_* Tilde _* val:Number { return val })? _+
+value:Switch {
+  return {
+    code: 121,
+    parameters: [numberFrom, numberTo || numberFrom, value]
+  }
+} / "switch" _+
+key:[a-dA-D] _+
+value:Switch {
+  return {
+    code: 123,
+    parameters: [key.toUpperCase(), value]
+  }
+}
+VariableCommand = "variable" _+ numberFrom:Number
+numberTo:(_* Tilde _* val:Number { return val })? _+
+operator:("set" / "add" / "subtract" / "multiply" / "divide" / "modulo") _+
+operand:("variable" / "random" / "nthMemberID")? {
+  return {
+    code: 122,
+    parameters: [numberFrom, numberTo || numberFrom, operator, operand]
+  }
+}
 TintCommand = "tintScreen" _+ parameters:TintParameters {
   return {
     code: 223,
@@ -181,14 +208,12 @@ PlayAudioCommandName = "playBGM" {
   return 250
 }
 
-MessageParameters = face:("face:" _* val:FaceParameter　_+ { return val })?
-"window:" _* window:MessageWindowParameter {
+MessageParameters = face:(_* val:FaceParameter　_+ { return val })?
+window:MessageWindowParameter {
   return [...(face ? face : ["", 0]), ...window]
 }
-MessageWindowParameter =  BracketOpen _*
-background:MessageWindowBackground _+
-poisition:MessageWindowPosition _*
-BracketClose {
+MessageWindowParameter = background:MessageWindowBackground _+
+poisition:MessageWindowPosition {
   return [background, poisition]
 }
 TintParameters = color:ColorParameter _+
@@ -298,10 +323,7 @@ PlayAudioParameters = name:String _*
   }]
 }
 
-FaceParameter = BracketOpen _*
-name:String _+
-index:SignedNumber _*
-BracketClose {
+FaceParameter = name:String ':' _* index:SignedNumber {
   return [name, index]
 } / "なし" {
   return ["", 0]
@@ -385,6 +407,7 @@ Number = num:([0-9]+) {
 SignedNumber = sign:Minus? num:([0-9]+) {
   return parseInt((sign ? [sign, ...num] : num).join(''), 0)
 }
+Switch = "on" { return 0 } / "off" { return 1 }
 Boolean = True / False
 True = "true" { return true }
 False = "false" { return false }
@@ -394,9 +417,11 @@ Chars = text:(Char+) {
   return text.join('')
 }
 _ = Space
+Tilde = "~"
 Minus = "-"
 Percent = "%"
 At = "@"
+Numbersign　= "#"
 GreaterThan = ">"
 Coron = ":"
 Quote = "\""
