@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "pegjs:build": "pegjs -o src/parser.js src/syntax.peg",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
@@ -22,7 +23,6 @@
     "vue-router": "^3.0.3"
   },
   "devDependencies": {
-    "@types/codemirror": "^0.0.76",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-plugin-typescript": "^3.11.0",
@@ -34,6 +34,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.9.0",
+    "pegjs": "^0.10.0",
     "sass-loader": "^7.1.0",
     "typescript": "^3.4.3",
     "vue-cli-plugin-electron-builder": "^1.4.0",

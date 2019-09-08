@@ -13,7 +13,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
-import CodeMirror from 'codemirror'
 import { store } from '../../store'
 import EventBus from '../../event-bus'
 import MonacoEditor from 'vue-monaco'
