@@ -1,6 +1,6 @@
 {
-  "name": "everett2",
-  "version": "0.1.0",
+  "name": "everett",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
