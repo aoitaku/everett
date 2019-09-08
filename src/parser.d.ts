@@ -76,5 +76,5 @@ declare module './parser' {
     name: 'SyntaxError'
   }
   export type ParseResult = IEventCommand[]
-  function parse (input: string, options?: IParseOptions): ParseResult
+  export function parse (input: string, options?: IParseOptions): ParseResult
 }

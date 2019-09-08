@@ -664,8 +664,8 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       },
     ],
     description ([type, force, duration, wait]: IWeatherCommand['parameters']) {
-      const weather = [[
-        'なし', '雨', '嵐', '雪'][type],
+      const weather = [
+        ['なし', '雨', '嵐', '雪'][type],
         type === 0 ? force : null,
       ].filter((v) => v).join(', ')
       return {

@@ -1,5 +1,5 @@
 import { ShowMessageParameters } from './commands/parameters'
-import Parser from './parser'
+import { parse } from './parser'
 import errorTransform from './parser-error-transform'
 import resultTransform, { resultDescriptions } from './parser-result-transform'
 import { ICommandDescription } from './commands/definitions'
@@ -50,7 +50,7 @@ export const store: IStore = {
   updateSource (newValue: string) {
     this.state.source = newValue
     try {
-      const result = resultTransform(Parser.parse(this.state.source))
+      const result = resultTransform(parse(this.state.source))
       this.state.eventDataJSON = JSON.stringify(result)
       this.state.parseResult = resultDescriptions(result)
       this.state.parseError = ''

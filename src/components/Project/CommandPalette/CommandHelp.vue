@@ -118,7 +118,7 @@ export default class CommandHelp extends Vue {
     }, this.values)
   }
 
-  public visibleIfEqual (a?: string, b?: string ) {
+  public visibleIfEqual (a?: string, b?: string) {
     return { display: (a || 'default') === (b || 'default') ? 'block' : 'none' }
   }
 }

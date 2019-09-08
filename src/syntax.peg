@@ -245,7 +245,7 @@ wait:WaitParameter {
     wait,
   ]
 }
-WeatherParameters = "type:" _* weather:WeatherType _+
+WeatherParameters = weather:WeatherType _+
 "force:" _* force:Number _+
 duration:DurationParameter
 wait:WaitParameter {

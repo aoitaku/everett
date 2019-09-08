@@ -7281,10 +7281,17 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-pegjs@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/pegjs/-/pegjs-0.10.0.tgz#cf8bafae6eddff4b5a7efb185269eaaf4610ddbd"
-  integrity sha1-z4uvrm7d/0tafvsYUmnqr0YQ3b0=
+pegjs-dev@^0.11.0-dev:
+  version "0.11.0-dev"
+  resolved "https://registry.yarnpkg.com/pegjs-dev/-/pegjs-dev-0.11.0-dev.tgz#466a59a82c45ad773d0990acdefc3b786b6444c8"
+  integrity sha512-P8e3VBzsIvpiCoIIJYPPA79ZWgBZ4jWT8K2/sxmFCLhC2UqF8oO8L68TVoIZE9McSgykXRPooYEMxCo603PYWw==
+  dependencies:
+    pegjs dev
+
+pegjs@dev:
+  version "0.11.0-master.0b102d2"
+  resolved "https://registry.yarnpkg.com/pegjs/-/pegjs-0.11.0-master.0b102d2.tgz#70513ed3b493e81a99a6aab5db205dbef01bdcae"
+  integrity sha512-t3GC8LbKyFb2kKLHUxjmGXuUhMNdTT3Y+64JBHLZitQlFkK89TRiVsa3Tw6Ld7j0UooaIkKYbEkK1USInTOw6A==
 
 pend@~1.2.0:
   version "1.2.0"
