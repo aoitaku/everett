@@ -70,6 +70,7 @@ export default class CommandHelp extends Vue {
       case 'select':
       case 'optional':
       case 'filename':
+      case 'spriteset':
       case 'vector':
       case 'tone':
       case 'color':
@@ -90,6 +91,8 @@ export default class CommandHelp extends Vue {
         return signature.value[1].values[0].value
       case 'filename':
         return null
+      case 'spriteset':
+        return ['', 0]
       case 'optional':
         if (signature.value[1]) {
           return [false, signature.value[1].default]

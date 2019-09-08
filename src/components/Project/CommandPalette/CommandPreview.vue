@@ -10,18 +10,24 @@
     span.command {{ item.name }}
     span.parameterSignature(v-for="parameter in normalizedValues")
       | &ensp;
-      span(v-if="parameter.key")
-        span(v-if="typeof parameter.value !== 'boolean'")
-          span.attribute {{ parameter.key }}
+      template(v-if="parameter.key")
+        template(v-if="typeof parameter.value !== 'boolean'")
+          template(v-if="parameter.key.match(/^\".*\"$/)")
+            parameter(:value="parameter.key") {{ parameter.key }}
+          template(v-else)
+            span.attribute {{ parameter.key }}
           span.operator :
           | &ensp;
-      parameter(v-if="typeof parameter.value === 'string' || typeof parameter.value === 'number'", :value="parameter.value") {{ parameter.value }}
-      span(v-else-if="typeof parameter.value === 'boolean'")
-        span.attribute(v-if="parameter.value") {{ parameter.key }}
-      span(v-else)
+      template(v-if="typeof parameter.value === 'string' || typeof parameter.value === 'number'")
+        parameter(:value="parameter.value") {{ parameter.value }}
+      template(v-else-if="typeof parameter.value === 'boolean'")
+        template(v-if="parameter.value")
+          span.attribute {{ parameter.key }}
+      template(v-else)
         | [
-        span(v-for="(value, index) in parameter.value")
-          span(v-if="index > 0") &ensp;
+        template(v-for="(value, index) in parameter.value")
+          template(v-if="index > 0")
+            | &ensp;
           parameter(:value="value") {{ value }}
         | ]
 </template>
@@ -76,7 +82,15 @@ export default class CommandPreview extends Vue {
           }
           break
         case 'filename':
-          value = this.values[index] || '"ファイル名"'
+          value = this.values[index] || 'なし'
+          break
+        case 'spriteset':
+          if (!this.values[index][0] || this.values[index][0] === '""') {
+            value = 'なし'
+          } else {
+            key = this.values[index][0]
+            value = this.values[index][1]
+          }
           break
         default:
           value = this.values[index] || '0'
@@ -88,7 +102,7 @@ export default class CommandPreview extends Vue {
         }
       }
       return { value }
-    }).filter(({ value }) => value !== null)
+    }).filter(({ value }) => value !== null && value !== false && value !== undefined)
   }
 
   public insertCommandClicked () {
@@ -110,6 +124,8 @@ export default class CommandPreview extends Vue {
         return type
       case 'filename':
         return 'filename'
+      case 'spriteset':
+        return 'spriteset'
       default:
         return type
     }

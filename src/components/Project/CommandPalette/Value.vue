@@ -15,6 +15,7 @@ export default class Value extends Vue {
   public get valueType () {
     switch (this.value) {
       case 'filename':
+      case 'spriteset':
       case 'string':
       case 'variable':
       case 'number':
@@ -36,5 +37,7 @@ export default class Value extends Vue {
 .keyword
   color: #009688
 .filename
+  color: #3f51b5
+.spriteset
   color: #3f51b5
 </style>

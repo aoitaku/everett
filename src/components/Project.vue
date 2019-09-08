@@ -63,6 +63,7 @@ export default class Project extends Vue {
     }
     const mediaList = [
       { folder: 'img/pictures', name: 'picture' },
+      { folder: 'img/faces', name: 'face' },
       { folder: 'img/parallaxes', name: 'parallax' },
       { folder: 'audio/bgm', name: 'bgm' },
       { folder: 'audio/bgs', name: 'bgs' },

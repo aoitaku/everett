@@ -19,8 +19,21 @@
           | ）
       p 以外はすべてメッセージ行になります。
       p 空行でメッセージウィンドウの改ページを行います。
-      h1 メッセージのオプション
-      command-help(:item="showTextCommand")
+      p
+        code ~
+        | ではじまる行は、
+        code ~
+        | を取り除いた以降のテキストがメッセージとして扱われます。
+      p
+        | メッセージ中に空行を表示したい場合は
+        code ~
+        | のみの行を入力してください。
+      el-collapse
+        el-collapse-item(
+          :title="showTextCommand.title",
+          :name="showTextCommand.name",
+        )
+          command-help(:item="showTextCommand")
       h1 キャラクター名設定行
       p
         code &gt;

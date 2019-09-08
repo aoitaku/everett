@@ -54,11 +54,53 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
   101: {
     name: 'showText',
     title: '文章の表示',
-    parameterSignatures: [],
+    parameterSignatures: [
+      {
+        type: 'spriteset',
+        value: ['spriteset', {
+          folder: 'img/faces',
+          name: 'face',
+          minIndex: 0,
+          maxIndex: 7,
+          defaultIndex: 0,
+        }],
+        label: 'ファイル',
+      }, {
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'window',
+            label: 'ウィンドウ',
+          }, {
+            value: 'darken',
+            label: '暗くする',
+          }, {
+            value: 'transparent',
+            label: '透明',
+          }],
+        }],
+        label: '背景',
+      }, {
+        type: 'select',
+        value: ['keyword', {
+          values: [{
+            value: 'top',
+            label: '上',
+          }, {
+            value: 'middle',
+            label: '中',
+          }, {
+            value: 'bottom',
+            label: '下',
+          }],
+        }],
+        label: '位置',
+      },
+    ],
     description (parameters: IShowTextCommand['parameters']) {
       return {
         content: this.title,
-        color: 'screen',
+        color: 'message',
       }
     },
   },
@@ -485,7 +527,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
     ],
     description ([
       id,
-      file,
+      _,
       origin,
       byVariable, x, y,
       scaleX, scaleY,

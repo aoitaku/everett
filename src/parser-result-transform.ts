@@ -6,6 +6,7 @@ export default function resultTransform (result: ParseResult) {
   return result.map((command) => {
     switch (command.code) {
       case 101:
+        console.log(command.parameters)
         const [
           faceName,
           faceIndex,
@@ -19,10 +20,10 @@ export default function resultTransform (result: ParseResult) {
           defaultWindowPosition,
         ] = store.state.showMessageParameters
         command.parameters = [
-          faceName || defaultFaceName,
-          faceIndex || defaultFaceIndex,
-          windowStyle || defaultWindowStyle,
-          windowPosition || defaultWindowPosition,
+          faceName === undefined ? defaultFaceName : faceName,
+          faceIndex === undefined ? defaultFaceIndex : faceIndex,
+          windowStyle === undefined ? defaultWindowStyle : windowStyle,
+          windowPosition === undefined ? defaultWindowPosition : windowPosition,
         ]
         return {
           ...command,
@@ -51,6 +52,7 @@ export function resultDescriptions (result: IEventCommand[]): ICommandDescriptio
   return result.map((command) => {
     switch (command.code) {
       case 101:
+        console.log(command.parameters)
         const [
           faceName,
           faceIndex,
@@ -63,10 +65,11 @@ export function resultDescriptions (result: IEventCommand[]): ICommandDescriptio
         const windowPosition = [
           '上', '中', '下',
         ][windowPositionValue]
+        const face = faceName === '' ? 'なし' : `${faceName}(${faceIndex})`
         return {
           content: '文章：',
           color: 'message',
-          option: `${faceName}(${faceIndex}), ${windowStyle}, ${windowPosition}`,
+          option: `${face}, ${windowStyle}, ${windowPosition}`,
           prefix: '◆',
         }
       case 401:

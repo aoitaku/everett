@@ -23,6 +23,12 @@ span.parameter-signature
       | &nbsp;}
   template(v-else-if="type(signature.type) === 'list'")
     list-value(:values="signature.values")
+  template(v-else-if="type(signature.type) === 'spriteset'")
+    span.value
+      value(:value="signature.value[0]") {{ signature | toValue }}
+    | :&nbsp;
+    span.value
+      value(value="number") number
   template(v-else)
     span.value
       value(:value="signature.value[0]") {{ signature | toValue }}
@@ -53,6 +59,8 @@ import Value from './Value.vue'
           return signature.value[0]
         case 'filename':
           return `"${signature.value[1].name} file"`
+        case 'spriteset':
+          return `"${signature.value[1].name} file"`
         default:
           return signature.value[0]
       }
@@ -68,6 +76,7 @@ export default class ParameterSignature extends Vue {
       case 'or':
       case 'select':
       case 'optional':
+      case 'spriteset':
         return type
       case 'color':
       case 'tone':

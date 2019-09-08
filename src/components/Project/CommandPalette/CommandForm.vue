@@ -16,6 +16,17 @@
     tone-editor(v-model="input")
   template(v-else-if="type === 'filename'")
     file-select(v-model="input", :media="options.name")
+  template(v-else-if="type === 'spriteset'")
+    .el-input-group
+      .el-input-group__prepend
+        file-select(v-model="input[0]", :media="options.name")
+      el-input-number(
+        v-model="input[1]",
+        :min="options.minIndex",
+        :max="options.maxIndex",
+        size="small",
+        controls-position="right",
+      )
   template(v-else-if="type === 'volume'")
     slider(
       v-model="input",
@@ -31,10 +42,10 @@
       controls-position="right",
     )
   template(v-else-if="type === 'optional'")
-    template(v-if="signature.value[0] === 'true'")
-      el-switch(v-model="input[0]")
-    template(v-else-if="signature.value[0] === 'number'")
+    template(v-if="signature.value[0] === 'number'")
       optional-input-number(v-model="input")
+    template(v-else-if="signature.value[0] === 'true'")
+      el-switch(v-model="input[0]")
   template(v-else-if="type === 'tuple'")
     .row(v-for="(option, index) in values")
       .label {{ option[1].label }}
@@ -115,6 +126,16 @@ export default class CommandForm extends Vue {
   }
 }
 </script>
+
+<style lang="sass">
+.form
+  .el-input-group
+    .el-select
+      width: 190px
+    .el-input-group__prepend + .el-input-number /deep/ .el-input__inner
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
+</style>
 
 <style lang="sass" scoped>
 .form

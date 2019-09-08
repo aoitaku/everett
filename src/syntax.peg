@@ -256,7 +256,9 @@ wait:WaitParameter {
     wait,
   ]
 }
-ShowPictureParameters = id:Number _+ name:String _+ parameters:PictureParameters {
+ShowPictureParameters = id:Number _+
+name:(String /  ("none" / "なし") { return "" }) _+
+parameters:PictureParameters {
   return [
     id,
     name,
@@ -300,7 +302,7 @@ position:PicturePositionParameter _+
     blend,
   ]
 }
-ChangeBackgroundParameters = name:String
+ChangeBackgroundParameters = name:(String /  ("none" / "なし") { return "" })
 loopX:(_+ "loopX:" _* val:BackgroundLoopParameter { return val })?
 loopY:(_+ "loopY:" _* val:BackgroundLoopParameter { return val })? {
   return [
@@ -311,7 +313,7 @@ loopY:(_+ "loopY:" _* val:BackgroundLoopParameter { return val })? {
     loopY === false ? 0 : loopY,
   ]
 }
-PlayAudioParameters = name:String _*
+PlayAudioParameters = name:(String /  ("none" / "なし") { return "" }) _*
 "volume:" _* volume:Number _+
 "pitch:" _* pitch:Number _+
 "pan:" _* pan:SignedNumber {
@@ -325,7 +327,7 @@ PlayAudioParameters = name:String _*
 
 FaceParameter = name:String ':' _* index:SignedNumber {
   return [name, index]
-} / "なし" {
+} / ("none" / "なし") {
   return ["", 0]
 }
 

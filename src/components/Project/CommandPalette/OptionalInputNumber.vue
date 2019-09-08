@@ -1,12 +1,14 @@
 <template lang="pug">
 .optional-input-number
-  el-input-number(
-    v-model="input[1]",
-    size="small",
-    :disabled="!input[0]",
-    controls-position="right",
-  )
-    el-switch(v-model="input[0]", slot="prepend")
+  .el-input-group
+    .el-input-group__prepend
+      el-switch(v-model="input[0]")
+    el-input-number(
+      v-model="input[1]",
+      size="small",
+      :disabled="!input[0]",
+      controls-position="right",
+    )
 </template>
 
 <script lang="ts">
@@ -40,8 +42,8 @@ export default class OptionalInputNumber extends Vue {
 .optional-input-number
   .el-input-number
     width: 214px
-    .el-input-group.el-input
-      display: inline-table
-      .el-input-group__prepend
-        padding: 0 10px
+  .el-input-group
+    .el-input-group__prepend + .el-input-number /deep/ .el-input__inner
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
 </style>
