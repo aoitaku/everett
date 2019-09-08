@@ -15,6 +15,6 @@ monaco.editor.defineTheme('everett', {
     { token: 'keyword', foreground: '009688' },
     { token: 'attributes', foreground: '2196f3' },
     { token: 'string', foreground: '3f51b5' },
-    { token: 'comment', foreground: 'aaaaaa' }
-  ]
+    { token: 'comment', foreground: 'aaaaaa' },
+  ],
 })

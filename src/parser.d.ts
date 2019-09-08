@@ -1,5 +1,5 @@
 import { IPlayAudioParameter, ColorParameter } from './commands/parameters'
-import { ParseResult } from './parser'
+import SyntaxError, { ParseResult } from './parser'
 import { IShowMessageCommand } from './commands/show-message'
 import { IMessageCommand } from './commands/message'
 import { IFadeoutScreenCommand } from './commands/fadeout-screen'
@@ -29,7 +29,6 @@ import { ISaveCommand } from './commands/save'
 import { IGameOverCommand } from './commands/game-over'
 import { IReturnToTitleCommand } from './commands/return-to-title'
 import { IPluginCommand } from './commands/plugin'
-import SyntaxError from './parser'
 
 export type IEventCommand =
   IShowMessageCommand |
@@ -74,7 +73,7 @@ declare module './parser' {
     expected: any
     found: any
     location: any
-    name: "SyntaxError"
+    name: 'SyntaxError'
   }
   export type ParseResult = IEventCommand[]
   function parse (input: string, options?: IParseOptions): ParseResult

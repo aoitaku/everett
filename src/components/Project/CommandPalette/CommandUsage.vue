@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator'
 import { IParameterSignature } from '../../../commands/definitions'
 import ParameterSignature from './ParameterSignature.vue'
 

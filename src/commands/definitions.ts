@@ -118,12 +118,12 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           min: 0,
           default: 60,
         }],
-        label: '効果時間（フレーム）'
+        label: '効果時間（フレーム）',
       }, {
         key: 'wait',
         type: 'optional',
         value: ['true'],
-        label: '完了までウェイト'
+        label: '完了までウェイト',
       },
     ],
     description ([color, duration, wait]: ITintScreenCommand['parameters']) {
@@ -172,7 +172,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
         key: 'wait',
         type: 'optional',
         value: ['true'],
-        label: '完了までウェイト'
+        label: '完了までウェイト',
       },
     ],
     description ([color, duration, wait]: IFlashScreenCommand['parameters']) {
@@ -205,7 +205,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           max: 9,
           default: 5,
         }],
-        label: '速さ'
+        label: '速さ',
       }, {
         key: 'duration',
         type: 'number',
@@ -218,7 +218,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
         key: 'wait',
         type: 'optional',
         value: ['true'],
-        label: '完了までウェイト'
+        label: '完了までウェイト',
       },
     ],
     description ([force, speed, duration, wait]: IShakeScreenCommand['parameters']) {
@@ -240,7 +240,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           min: 0,
           default: 60,
         }],
-        label: 'ウェイトの長さ（フレーム）'
+        label: 'ウェイトの長さ（フレーム）',
       },
     ],
     description ([wait]: IWaitCommand['parameters']) {
@@ -262,7 +262,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           max: 100,
           default: 1,
         }],
-        label: 'ピクチャ番号'
+        label: 'ピクチャ番号',
       }, {
         type: 'filename',
         value: ['filename', {
@@ -359,7 +359,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       byVariable, x, y,
       scaleX, scaleY,
       opacity,
-      blend
+      blend,
     ]: IShowPictureCommand['parameters']) {
       const parameters = [
         `#${id}`,
@@ -387,7 +387,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           max: 100,
           default: 1,
         }],
-        label: 'ピクチャ番号'
+        label: 'ピクチャ番号',
       }, {
         type: 'select',
         value: ['keyword', {
@@ -491,7 +491,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       scaleX, scaleY,
       opacity, blend,
       duration,
-      wait
+      wait,
     ]: IMovePictureCommand['parameters']) {
       const parameters = [
         `#${id}`,
@@ -520,7 +520,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           max: 100,
           default: 1,
         }],
-        label: 'ピクチャ番号'
+        label: 'ピクチャ番号',
       },
       {
         key: 'speed',
@@ -528,7 +528,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
         value: ['number', {
           default: 0,
         }],
-        label: '回転速度'
+        label: '回転速度',
       },
     ],
     description ([id, speed]: IRotatePictureCommand['parameters']) {
@@ -550,7 +550,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           max: 100,
           default: 1,
         }],
-        label: 'ピクチャ番号'
+        label: 'ピクチャ番号',
       }, {
         type: 'tone',
         values: [['number', {
@@ -583,7 +583,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
         key: 'wait',
         type: 'optional',
         value: ['true'],
-        label: '完了までウェイト'
+        label: '完了までウェイト',
       },
     ],
     description ([id, color, duration, wait]: ITintPictureCommand['parameters']) {
@@ -606,7 +606,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
           max: 100,
           default: 1,
         }],
-        label: 'ピクチャ番号'
+        label: 'ピクチャ番号',
       },
     ],
     description ([id]: IErasePictureCommand['parameters']) {
@@ -664,7 +664,7 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       },
     ],
     description ([type, force, duration, wait]: IWeatherCommand['parameters']) {
-      const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v)=> v).join(', ')
+      const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v) => v).join(', ')
       return {
         content: `${this.title}：${weather}, ${duration}フレーム`,
         color: 'screen',

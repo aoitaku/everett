@@ -10,13 +10,12 @@ import * as fs from 'fs'
 import path from 'path'
 import { store } from '../../../store'
 
-
 @Component
 export default class TestPlay extends Vue {
   public sharedState = store.state
 
   public eventDataExists () {
-    return 0 < this.sharedState.eventDataJSON.length
+    return this.sharedState.eventDataJSON.length > 0
   }
 
   public canPlay () {

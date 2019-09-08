@@ -4,7 +4,7 @@ import errorTransform from './parser-error-transform'
 import resultTransform, { resultDescriptions } from './parser-result-transform'
 import { ICommandDescription } from './commands/definitions'
 
-export interface ISharedState  {
+export interface ISharedState {
   selectedProject: string | null
   selectedFile: string | null
   files: { [key: string]: string[] }
@@ -34,7 +34,7 @@ export const store: IStore = {
     parseResult: [],
     parseError: '',
     source: '',
-    showMessageParameters: ["Actor1", 0, 0, 2],
+    showMessageParameters: ['Actor1', 0, 0, 2],
     edited: false,
     busy: false,
   },

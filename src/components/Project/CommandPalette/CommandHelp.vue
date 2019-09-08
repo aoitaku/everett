@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator'
 import CommandUsage from './CommandUsage.vue'
 import CommandPreview from './CommandPreview.vue'
 import CommandForm from './CommandForm.vue'
@@ -36,7 +36,7 @@ export default class CommandHelp extends Vue {
     title: '',
     example: '',
     parameterSignatures: [],
-  }})
+  } })
   public item!: ICommandDefinition
 
   public values: { [key: number]: string | number | number[] | boolean } = {}
@@ -59,47 +59,47 @@ export default class CommandHelp extends Vue {
 
   public isSingleInput (type: string) {
     switch (type) {
-    case 'select':
-    case 'optional':
-    case 'filename':
-    case 'vector':
-    case 'tone':
-    case 'color':
-    case 'volume':
-    case 'number':
-      return true
+      case 'select':
+      case 'optional':
+      case 'filename':
+      case 'vector':
+      case 'tone':
+      case 'color':
+      case 'volume':
+      case 'number':
+        return true
     }
     return false
   }
 
   public defaultValueForSignature (signature: IParameterSignature): any {
     switch (signature.type) {
-    case 'tone':
-    case 'color':
-    case 'vector':
-      return signature.values.map((value: [any, { default: number }]) => value[1].default)
-    case 'select':
-      return signature.value[1].values[0].value
-    case 'filename':
-      return null
-    case 'optional':
-      if (signature.value[1]) {
-        return [false, signature.value[1].default]
-      }
-      return [false, null]
-    case 'or':
-      const keyedValues = signature.values.filter(({ key }: IParameterSignature) => key)
-      return [undefined, {
-        default: this.defaultValueForSignature(signature.values[0]),
-        ...keyedValues.reduce((prev: { [key: string]: any }, keyedValue: IParameterSignature) => {
-          return {
-            ...prev,
-            [keyedValue.key]: this.defaultValueForSignature(keyedValue),
-          }
-        }, {})
-      }]
-    default:
-      return signature.value[1].default
+      case 'tone':
+      case 'color':
+      case 'vector':
+        return signature.values.map((value: [any, { default: number }]) => value[1].default)
+      case 'select':
+        return signature.value[1].values[0].value
+      case 'filename':
+        return null
+      case 'optional':
+        if (signature.value[1]) {
+          return [false, signature.value[1].default]
+        }
+        return [false, null]
+      case 'or':
+        const keyedValues = signature.values.filter(({ key }: IParameterSignature) => key)
+        return [undefined, {
+          default: this.defaultValueForSignature(signature.values[0]),
+          ...keyedValues.reduce((prev: { [key: string]: any }, keyedValue: IParameterSignature) => {
+            return {
+              ...prev,
+              [keyedValue.key]: this.defaultValueForSignature(keyedValue),
+            }
+          }, {}),
+        }]
+      default:
+        return signature.value[1].default
     }
   }
 
@@ -135,4 +135,3 @@ export default class CommandHelp extends Vue {
         .el-input-group__prepend
           padding: 0 10px
 </style>
-

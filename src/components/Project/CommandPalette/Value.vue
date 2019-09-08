@@ -14,13 +14,13 @@ export default class Value extends Vue {
 
   public get valueType () {
     switch (this.value) {
-    case 'filename':
-    case 'string':
-    case 'variable':
-    case 'number':
-      return this.value
-    default:
-      return 'keyword'
+      case 'filename':
+      case 'string':
+      case 'variable':
+      case 'number':
+        return this.value
+      default:
+        return 'keyword'
     }
   }
 }

@@ -6,5 +6,5 @@ export const router = new VueRouter({
   routes: [
     { path: '/', name: 'open-project', component: OpenProject },
     { path: '/project', name: 'project', component: Project },
-  ]
+  ],
 })

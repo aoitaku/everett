@@ -18,7 +18,7 @@ import { store } from '../../store'
 import EventBus from '../../event-bus'
 import MonacoEditor from 'vue-monaco'
 import * as monacoEditor from 'monaco-editor'
-import { cursorTo } from 'readline';
+import { cursorTo } from 'readline'
 
 type MonacoOptions = monacoEditor.editor.IEditorConstructionOptions | { tabSize: number }
 
@@ -32,7 +32,7 @@ export default class Editor extends Vue {
   public sharedState = store.state
   public editor!: monacoEditor.editor.ICodeEditor
 
-  public get monacoOptions(): MonacoOptions {
+  public get monacoOptions (): MonacoOptions {
     return {
       language: 'everett',
       theme: 'everett',

@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator'
 import { ICommandDefinition } from '../../../commands/definitions'
 import Parameter from './Parameter.vue'
 import EventBus from '../../../event-bus'
@@ -36,7 +36,7 @@ import EventBus from '../../../event-bus'
 @Component({
   components: {
     Parameter,
-  }
+  },
 })
 export default class CommandPreview extends Vue {
   @Prop()
@@ -54,32 +54,32 @@ export default class CommandPreview extends Vue {
   }
 
   public get normalizedValues () {
-    return this.parameterSignatures.map ((signature, index) => {
+    return this.parameterSignatures.map((signature, index) => {
       let key = signature.key
       let value: string | string[] | boolean
       switch (this.type(signature.type || '')) {
-      case 'select':
-        value = this.values[index] || signature.value[1].values[0].value
-        break
-      case 'list':
-        value = this.values[index] || signature.values.map(() => '0')
-        break
-      case 'or':
-        key = this.values[index][0]
-        value = this.values[index][1][key || 'default'] || signature.values[0].values.map(() => '0')
-        break
-      case 'optional':
-        if (this.values[index][0] && this.values[index][1] !== null) {
-          value = this.values[index][1]
-        } else {
-          value = this.values[index][0]
-        }
-        break
-      case 'filename':
-        value = this.values[index] || '"ファイル名"'
-        break
-      default:
-        value = this.values[index] || '0'
+        case 'select':
+          value = this.values[index] || signature.value[1].values[0].value
+          break
+        case 'list':
+          value = this.values[index] || signature.values.map(() => '0')
+          break
+        case 'or':
+          key = this.values[index][0]
+          value = this.values[index][1][key || 'default'] || signature.values[0].values.map(() => '0')
+          break
+        case 'optional':
+          if (this.values[index][0] && this.values[index][1] !== null) {
+            value = this.values[index][1]
+          } else {
+            value = this.values[index][0]
+          }
+          break
+        case 'filename':
+          value = this.values[index] || '"ファイル名"'
+          break
+        default:
+          value = this.values[index] || '0'
       }
       if (key) {
         return {
@@ -100,18 +100,18 @@ export default class CommandPreview extends Vue {
       return 'other'
     }
     switch (type) {
-    case 'color':
-    case 'tone':
-    case 'vector':
-      return 'list'
-    case 'or':
-    case 'select':
-    case 'optional':
-      return type
-    case 'filename':
-      return 'filename'
-    default:
-      return type
+      case 'color':
+      case 'tone':
+      case 'vector':
+        return 'list'
+      case 'or':
+      case 'select':
+      case 'optional':
+        return type
+      case 'filename':
+        return 'filename'
+      default:
+        return type
     }
   }
 }

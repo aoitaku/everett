@@ -33,12 +33,12 @@ export default class EditorResult extends Vue {
     if (this.sharedState.busy || this.sharedState.eventDataJSON.length < 1) {
       return
     }
-    const testEventBuffer = new Buffer(this.sharedState.eventDataJSON, 'utf-8')
+    const testEventBuffer = Buffer.from(this.sharedState.eventDataJSON, 'utf-8')
     await remote.clipboard.writeBuffer('application/rpgmv-EventCommand', testEventBuffer)
     this.$notify({
       title: 'クリップボードにコピーしました',
       message: 'イベントエディターの実行内容に貼り付けることができます',
-      type: 'success'
+      type: 'success',
     })
   }
 }

@@ -25,4 +25,3 @@ export default class ListValue extends Vue {
 .operator
   color: #3f51b5
 </style>
-

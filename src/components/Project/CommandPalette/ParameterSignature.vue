@@ -27,7 +27,7 @@ span.parameter-signature
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator'
 import { IParameterSignature } from '../../../commands/definitions'
 import ListValue from './ListValue.vue'
 import SelectValue from './SelectValue.vue'
@@ -42,17 +42,17 @@ import Value from './Value.vue'
   filters: {
     toValue (signature: IParameterSignature) {
       switch (signature.type) {
-      case 'optional':
-        if (signature.value[0] === 'true') {
-          return
-        }
-        return signature.value[0]
-      case 'filename':
-        return `"${signature.value[1].name} file"`
-      default:
-        return signature.value[0]
+        case 'optional':
+          if (signature.value[0] === 'true') {
+            return
+          }
+          return signature.value[0]
+        case 'filename':
+          return `"${signature.value[1].name} file"`
+        default:
+          return signature.value[0]
       }
-    }
+    },
   },
 })
 export default class ParameterSignature extends Vue {
@@ -61,16 +61,16 @@ export default class ParameterSignature extends Vue {
 
   public type (type: string) {
     switch (type) {
-    case 'or':
-    case 'select':
-    case 'optional':
-      return type
-    case 'color':
-    case 'tone':
-    case 'vector':
-      return 'list'
-    default:
-      return 'other'
+      case 'or':
+      case 'select':
+      case 'optional':
+        return type
+      case 'color':
+      case 'tone':
+      case 'vector':
+        return 'list'
+      default:
+        return 'other'
     }
   }
 }

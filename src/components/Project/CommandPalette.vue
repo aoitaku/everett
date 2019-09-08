@@ -105,7 +105,6 @@ const systemCommandCodes = [352, 353, 354]
   },
 })
 export default class CommandPalette extends Vue {
-
   public compacted = false
 
   private lastSelectedTabPane!: Vue

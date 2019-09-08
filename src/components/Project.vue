@@ -55,20 +55,20 @@ export default class Project extends Vue {
         ...systemData.variables.slice(1).reduce((
           prev: { [key:number]: string }, variableName: string, index: number
         ) => {
-          return { ...prev, [index+1]: variableName }
-        }, {})
+          return { ...prev, [index + 1]: variableName }
+        }, {}),
       })
     } else {
       document.title = `(${projectDir}) - ${title}`
     }
     const mediaList = [
-      {folder: 'img/pictures', name: 'picture'},
-      {folder: 'img/parallaxes', name: 'parallax'},
-      {folder: 'audio/bgm', name: 'bgm'},
-      {folder: 'audio/bgs', name: 'bgs'},
-      {folder: 'audio/me', name: 'me'},
-      {folder: 'audio/se', name: 'se'},
-      {folder: 'movies', name: 'movie'}
+      { folder: 'img/pictures', name: 'picture' },
+      { folder: 'img/parallaxes', name: 'parallax' },
+      { folder: 'audio/bgm', name: 'bgm' },
+      { folder: 'audio/bgs', name: 'bgs' },
+      { folder: 'audio/me', name: 'me' },
+      { folder: 'audio/se', name: 'se' },
+      { folder: 'movies', name: 'movie' },
     ]
     mediaList.forEach((media) => this.prepareFilelist(media))
   }
@@ -82,17 +82,17 @@ export default class Project extends Vue {
     }
     let ext: string
     switch (media.name) {
-    case 'bgm':
-    case 'bgs':
-    case 'me':
-    case 'se':
-      ext = '.ogg'
-      break
-    case 'movie':
-      ext = '.webm'
-      break
-    default:
-      ext ='.png'
+      case 'bgm':
+      case 'bgs':
+      case 'me':
+      case 'se':
+        ext = '.ogg'
+        break
+      case 'movie':
+        ext = '.webm'
+        break
+      default:
+        ext = '.png'
     }
     const projectDir = path.dirname(this.selectedProject)
     const dir = (path.join(projectDir, media.folder))

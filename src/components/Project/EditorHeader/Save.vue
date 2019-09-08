@@ -30,7 +30,7 @@ export default class Save extends Vue {
     this.$notify({
       title: '保存しました',
       message: `${this.sharedState.selectedFile} を更新しました。`,
-      type: 'success'
+      type: 'success',
     })
   }
 }

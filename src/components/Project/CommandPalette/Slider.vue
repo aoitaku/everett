@@ -30,7 +30,6 @@ export default class Slider extends Vue {
 }
 </script>
 
-
 <style lang="sass">
 .slider
   .el-slider__input

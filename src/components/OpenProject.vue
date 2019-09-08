@@ -19,8 +19,8 @@ export default class OpenProject extends Vue {
       title: 'Select a RPG MV project file',
       defaultPath: '.',
       filters: [
-        {name: 'RPG MV Project', extensions: ['rpgproject']}
-      ]
+        { name: 'RPG MV Project', extensions: ['rpgproject'] },
+      ],
     })
     if (!filePaths) {
       return

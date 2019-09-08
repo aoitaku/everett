@@ -3,6 +3,6 @@ declare module 'element-ui/lib/locale' {
 }
 declare module 'element-ui/lib/locale/lang/*' {
   const el: {
-    [key: string]: { [key: string]: string | string[] | {  [key: string]: string } },
+    [key: string]: { [key: string]: string | string[] | { [key: string]: string } },
   }
 }

@@ -5,7 +5,7 @@ import { promisify } from 'util'
 import * as fs from 'fs'
 import {
   createProtocol,
-  installVueDevtools
+  installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -33,7 +33,7 @@ const dataNames = [
 ]
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
 
 function copyFile (src: string, dest: string, done: (err: Error, result: void) => void) {
   fs.createReadStream(src).on('error', done)
@@ -63,7 +63,7 @@ function createWindow () {
     height: 810,
     useContentSize: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
     },
   })
 

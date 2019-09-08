@@ -21,7 +21,6 @@ import Slider from './Slider.vue'
   },
 })
 export default class ToneEditor extends Vue {
-
   @Prop()
   public value!: [number, number, number, number]
 
