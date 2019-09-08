@@ -1,6 +1,11 @@
 <template lang="pug">
 .optional-input-number
-  el-input-number(v-model="input[1]", size="small", :disabled="!input[0]", controls-position="right")
+  el-input-number(
+    v-model="input[1]",
+    size="small",
+    :disabled="!input[0]",
+    controls-position="right",
+  )
     el-switch(v-model="input[0]", slot="prepend")
 </template>
 

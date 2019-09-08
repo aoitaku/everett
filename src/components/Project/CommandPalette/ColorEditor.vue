@@ -38,7 +38,13 @@ export default class colorEditor extends Vue {
     this.color = [...this.value] as [number, number, number, number]
   }
 
-  public fill (context: CanvasRenderingContext2D, blend: string, color: string, width: number, height: number) {
+  public fill (
+    context: CanvasRenderingContext2D,
+    blend: string,
+    color: string,
+    width: number,
+    height: number
+  ) {
     context.globalCompositeOperation = blend
     context.fillStyle = color
     context.fillRect(0, 0, width, height)
@@ -63,7 +69,13 @@ export default class colorEditor extends Vue {
 
     const rgb = this.color.slice(0, 3).map((color) => Math.max(0, color))
     const gray = Math.max(0, this.color[3])
-    this.fill(context2d, 'source-over', `rgba(${rgb.join(', ')}, ${gray / 255})`, width, height)
+    this.fill(
+      context2d,
+      'source-over',
+      `rgba(${rgb.join(', ')}, ${gray / 255})`,
+      width,
+      height,
+    )
 
     this.$emit('input', this.color)
   }

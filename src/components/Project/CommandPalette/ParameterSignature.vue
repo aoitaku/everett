@@ -7,21 +7,25 @@ span.parameter-signature
     template(v-if="!signature.value || signature.value[0] !== 'true'")
       span.operator :
       | &nbsp;
-  select-value(v-if="type(signature.type) === 'select'", :value="signature.value")
-  span.value(v-else-if="type(signature.type) === 'or'")
-    | {&nbsp;
-    template(v-for="({ key, values}, index) in signature.values")
-      template(v-if="index > 0")
-        | &nbsp;|&ensp;
-      template(v-if="key")
-        span.attribute {{ key }}
-        span.operator :
-        | &nbsp;
-      list-value(:values="values")
-    | &nbsp;}
-  list-value(v-else-if="type(signature.type) === 'list'", :values="signature.values")
-  span.value(v-else)
-    value(:value="signature.value[0]") {{ signature | toValue }}
+  template(v-if="type(signature.type) === 'select'")
+    select-value(:value="signature.value")
+  template(v-else-if="type(signature.type) === 'or'")
+    span.value
+      | {&nbsp;
+      template(v-for="({ key, values}, index) in signature.values")
+        template(v-if="index > 0")
+          | &nbsp;|&ensp;
+        template(v-if="key")
+          span.attribute {{ key }}
+          span.operator :
+          | &nbsp;
+        list-value(:values="values")
+      | &nbsp;}
+  template(v-else-if="type(signature.type) === 'list'")
+    list-value(:values="signature.values")
+  template(v-else)
+    span.value
+      value(:value="signature.value[0]") {{ signature | toValue }}
   template(v-if="signature.type === 'optional'") )
 </template>
 

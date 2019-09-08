@@ -1,6 +1,11 @@
 <template lang="pug">
 el-select.variable-select(v-model="input", size="small")
-  el-option(v-for="index in keys", :value="index", :label="`${index}: ${variables[index]}`", :key="index")
+  el-option(
+    v-for="index in keys",
+    :value="index",
+    :label="`${index}: ${variables[index]}`",
+    :key="index",
+  )
 </template>
 
 <script lang="ts">

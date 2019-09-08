@@ -25,13 +25,17 @@ export default class Save extends Vue {
       }
       this.sharedState.selectedFile = filePath
     }
-    await promisify(fs.writeFile)(this.sharedState.selectedFile, this.sharedState.source, 'utf-8')
+    await this.writeFile(this.sharedState.selectedFile, this.sharedState.source, 'utf-8')
     this.sharedState.edited = false
     this.$notify({
       title: '保存しました',
       message: `${this.sharedState.selectedFile} を更新しました。`,
       type: 'success',
     })
+  }
+
+  private async writeFile (file: string, content: string, encoding: string) {
+    await promisify(fs.writeFile)(file, content, encoding)
   }
 }
 </script>

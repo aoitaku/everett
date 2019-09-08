@@ -1,23 +1,61 @@
 <template lang="pug">
 .form
-  .label(v-if="showLabel") {{ signature.label }}
-  el-select(v-if="type === 'select'", v-model="input", size="small")
-    el-option(v-for="option in options.values", :value="option.value", :label="option.label", :key="option.value")
-  color-editor(v-else-if="type === 'color'", v-model="input")
-  tone-editor(v-else-if="type === 'tone'", v-model="input")
-  file-select(v-else-if="type === 'filename'", v-model="input", :media="options.name")
-  slider(v-else-if="type === 'volume'", v-model="input", :min="options.min", :max="options.max")
-  el-input-number(v-else-if="type === 'number'", v-model="input", :min="options.min", :max="options.max", size="small", controls-position="right")
+  template(v-if="showLabel")
+    .label {{ signature.label }}
+  template(v-if="type === 'select'")
+    el-select(v-model="input", size="small")
+      el-option(
+        v-for="option in options.values",
+        :value="option.value",
+        :label="option.label",
+        :key="option.value",
+      )
+  template(v-else-if="type === 'color'")
+    color-editor(v-model="input")
+  template(v-else-if="type === 'tone'")
+    tone-editor(v-model="input")
+  template(v-else-if="type === 'filename'")
+    file-select(v-model="input", :media="options.name")
+  template(v-else-if="type === 'volume'")
+    slider(
+      v-model="input",
+      :min="options.min",
+      :max="options.max",
+    )
+  template(v-else-if="type === 'number'")
+    el-input-number(
+      v-model="input",
+      :min="options.min",
+      :max="options.max",
+      size="small",
+      controls-position="right",
+    )
   template(v-else-if="type === 'optional'")
-    el-switch(v-if="signature.value[0] === 'true'", v-model="input[0]")
-    optional-input-number(v-else-if="signature.value[0] === 'number'", v-model="input")
+    template(v-if="signature.value[0] === 'true'")
+      el-switch(v-model="input[0]")
+    template(v-else-if="signature.value[0] === 'number'")
+      optional-input-number(v-model="input")
   template(v-else-if="type === 'tuple'")
     .row(v-for="(option, index) in values")
       .label {{ option[1].label }}
-      el-input-number(v-if="option[0] === 'number'" v-model="input[index]", :min="option[1].min", :max="option[1].max", size="small", controls-position="right")
-      variable-select(v-else-if="option[0] === 'variable'" v-model="input[index]", :min="option[1].min", :max="option[1].max", size="small", controls-position="right")
-      el-input(v-else, v-model="input[index]", size="small")
-
+      template(v-if="option[0] === 'number'")
+        el-input-number(
+          v-model="input[index]",
+          :min="option[1].min",
+          :max="option[1].max",
+          size="small",
+          controls-position="right",
+        )
+      template(v-else-if="option[0] === 'variable'")
+        variable-select(
+          v-model="input[index]",
+          :min="option[1].min",
+          :max="option[1].max",
+          size="small",
+          controls-position="right",
+        )
+      template(v-else)
+        el-input(v-model="input[index]", size="small")
 </template>
 
 <script lang="ts">

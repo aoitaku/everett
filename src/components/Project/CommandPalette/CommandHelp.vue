@@ -3,13 +3,21 @@
   command-usage(:name="name", :signatures="parameterSignatures")
   command-preview(:item="item", :values="values")
   .row(v-for="(signature, index) in parameterSignatures", :key="index")
-    command-form(v-if="isSingleInput(signature.type)", v-model="values[index]", :signature="signature")
+    template(v-if="isSingleInput(signature.type)")
+      command-form(v-model="values[index]", :signature="signature")
     template(v-else-if="signature.type === 'or'")
       .label {{ signature.label }}
       el-radio-group(v-model="values[index][0]")
-        el-radio-button(v-for="value in signature.values", :label="value.key", :key="value.key || 'default'") {{ value.label }}
+        template(v-for="value in signature.values")
+          el-radio-button(:label="value.key", :key="value.key || 'default'")
+            | {{ value.label }}
       .row(v-for="(value, i) in signature.values")
-        command-form(v-model="values[index][1][value.key || 'default']", :signature="value", :show-label="false", :style="{ display: (value.key || 'default') === (values[index][0] || 'default') ? 'block' : 'none' }")
+        command-form(
+          v-model="values[index][1][value.key || 'default']",
+          :signature="value",
+          :show-label="false",
+          :style="visibleIfEqual(value.key, values[index][0])",
+        )
 </template>
 
 <script lang="ts">
@@ -108,6 +116,10 @@ export default class CommandHelp extends Vue {
       const defaultValue = this.defaultValueForSignature(signature)
       return { ...prev, [index]: defaultValue }
     }, this.values)
+  }
+
+  public visibleIfEqual (a?: string, b?: string ) {
+    return { display: (a || 'default') === (b || 'default') ? 'block' : 'none' }
   }
 }
 </script>

@@ -1,6 +1,6 @@
 import { IPlayAudioParameter, ColorParameter } from './commands/parameters'
 import SyntaxError, { ParseResult } from './parser'
-import { IShowMessageCommand } from './commands/show-message'
+import { IShowTextCommand } from './commands/show-text'
 import { IMessageCommand } from './commands/message'
 import { IFadeoutScreenCommand } from './commands/fadeout-screen'
 import { IFadeinScreenCommand } from './commands/fadein-screen'
@@ -31,7 +31,7 @@ import { IReturnToTitleCommand } from './commands/return-to-title'
 import { IPluginCommand } from './commands/plugin'
 
 export type IEventCommand =
-  IShowMessageCommand |
+  IShowTextCommand |
   IMessageCommand |
   IFadeoutScreenCommand |
   IFadeinScreenCommand |

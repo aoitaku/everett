@@ -664,7 +664,10 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       },
     ],
     description ([type, force, duration, wait]: IWeatherCommand['parameters']) {
-      const weather = [['なし', '雨', '嵐', '雪'][type], type === 0 ? force : null].filter((v) => v).join(', ')
+      const weather = [[
+        'なし', '雨', '嵐', '雪'][type],
+        type === 0 ? force : null,
+      ].filter((v) => v).join(', ')
       return {
         content: `${this.title}：${weather}, ${duration}フレーム`,
         color: 'screen',
@@ -996,7 +999,10 @@ export const commandDefinitions: { [key: number]: ICommandDefinition } = {
       },
     ],
     description ([file, loopX, loopY, sX, sY]: IChangeBackgroundCommand['parameters']) {
-      const loop = ` (${[loopX ? '横方向にループする' : null, loopY ? '縦方向にループする' : null].filter((v) => v).join(', ')})`
+      const loop = ` (${[
+        loopX ? '横方向にループする' : null,
+        loopY ? '縦方向にループする' : null,
+      ].filter((v) => v).join(', ')})`
       return {
         content: `${this.title}：${file}`,
         color: 'changeBackground',

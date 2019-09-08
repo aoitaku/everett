@@ -52,7 +52,10 @@ export default class EditorHeader extends Vue {
   }
 
   public mounted () {
-    this.watcher.observe(this.discardConfirmation, { attributes: true, attributeFilter: ['style'] })
+    this.watcher.observe(this.discardConfirmation, {
+      attributes: true,
+      attributeFilter: ['style'],
+    })
   }
 
   public destroyed () {

@@ -38,7 +38,13 @@ export default class ToneEditor extends Vue {
     this.tone = [...this.value] as [number, number, number, number]
   }
 
-  public fill (context: CanvasRenderingContext2D, blend: string, color: string, width: number, height: number) {
+  public fill (
+    context: CanvasRenderingContext2D,
+    blend: string,
+    color: string,
+    width: number,
+    height: number,
+  ) {
     context.globalCompositeOperation = blend
     context.fillStyle = color
     context.fillRect(0, 0, width, height)
@@ -62,7 +68,13 @@ export default class ToneEditor extends Vue {
     context2d.drawImage(image, 0, 0, width, height)
 
     const gray = Math.max(0, this.tone[3])
-    this.fill(context2d, 'saturation', `rgba(255, 255, 255, ${gray / 255})`, width, height)
+    this.fill(
+      context2d,
+      'saturation',
+      `rgba(255, 255, 255, ${gray / 255})`,
+      width,
+      height,
+    )
 
     const rgb1 = this.tone.slice(0, 3).map((tone) => Math.max(0, tone))
     this.fill(context2d, 'lighter', `rgb(${rgb1.join(', ')})`, width, height)

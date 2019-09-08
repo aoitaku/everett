@@ -2,7 +2,11 @@
 .command-usage
   span.symbol @
   span.command {{ name }}
-  parameter-signature(v-for="(signature, index) in signatures", :key="index", :signature="signature")
+  parameter-signature(
+    v-for="(signature, index) in signatures",
+    :key="index",
+    :signature="signature",
+  )
 </template>
 
 <script lang="ts">
