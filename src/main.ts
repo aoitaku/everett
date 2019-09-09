@@ -18,7 +18,6 @@ import 'vue-awesome/icons/puzzle-piece'
 Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.component('icon', Icon)
-Vue.prototype.$notify = Notification
 
 /* eslint-disable no-new */
 new Vue({

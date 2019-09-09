@@ -21,6 +21,9 @@ import Toolbar from './Toolbar.vue'
 import { remote } from 'electron'
 import { store } from '../../store'
 
+const clipboardFormat = 'application/rpgmv-EventCommand'
+const pasteboardFormat = 'com.trolltech.anymime.application--rpgmv-EventCommand'
+
 @Component({
   components: {
     Toolbar,
@@ -33,8 +36,9 @@ export default class EditorResult extends Vue {
     if (this.sharedState.busy || this.sharedState.eventDataJSON.length < 1) {
       return
     }
+    const format = process.platform === 'darwin' ? pasteboardFormat : clipboardFormat
     const testEventBuffer = Buffer.from(this.sharedState.eventDataJSON, 'utf-8')
-    await remote.clipboard.writeBuffer('application/rpgmv-EventCommand', testEventBuffer)
+    await remote.clipboard.writeBuffer(format, testEventBuffer)
     this.$notify({
       title: 'クリップボードにコピーしました',
       message: 'イベントエディターの実行内容に貼り付けることができます',
