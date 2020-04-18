@@ -39,6 +39,7 @@ export default class Editor extends Vue {
       fontSize: 15,
       tabSize: 2,
       automaticLayout: true,
+      wrappingIndent: 'same',
     }
   }
 
