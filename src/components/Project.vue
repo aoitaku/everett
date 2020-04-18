@@ -11,13 +11,12 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import path from 'path'
-import * as fs from 'fs'
-import { promisify } from 'util'
 import { store } from '@/store'
 import CommandPalette from './Project/CommandPalette.vue'
 import EditorHeader from './Project/EditorHeader.vue'
 import Editor from './Project/Editor.vue'
 import EditorResult from './Project/EditorResult.vue'
+import { readFile, readdir } from '@/file-system'
 
 @Component({
   components: {
@@ -45,7 +44,7 @@ export default class Project extends Vue {
     }
     const projectDir = path.dirname(this.selectedProject)
     const systemDataPath = (path.join(projectDir, 'data', 'System.json'))
-    const systemDataFile = await promisify(fs.readFile).bind(fs)(systemDataPath, 'utf-8')
+    const systemDataFile = await readFile(systemDataPath, 'utf-8')
     const systemData = JSON.parse(systemDataFile)
     const title = document.title.split('-').slice(-1)[0].trim()
     if (systemData) {
@@ -97,7 +96,7 @@ export default class Project extends Vue {
     }
     const projectDir = path.dirname(this.selectedProject)
     const dir = (path.join(projectDir, media.folder))
-    const files = await promisify(fs.readdir).bind(fs)(dir)
+    const files = await readdir(dir)
     Vue.set(store.state, 'files', {
       ...store.state.files,
       [media.name]: files.filter((file) => {
