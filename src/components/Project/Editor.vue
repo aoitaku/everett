@@ -44,14 +44,20 @@ export default class Editor extends Vue {
 
   public created () {
     EventBus.$on('insert-command-clicked', this.insertCommand)
+    EventBus.$on('source-read', this.setSource)
   }
 
   public beforeDestroy () {
     EventBus.$off('insert-command-clicked', this.insertCommand)
+    EventBus.$off('source-read', this.setSource)
   }
 
   public mounted () {
     this.editor = (this.$refs.monaco as MonacoEditor.IMonacoEditorCompornent).getEditor()
+  }
+
+  public setSource (value: string) {
+    this.source = value
   }
 
   public sourceChanged (value: string, event: monacoEditor.editor.IModelContentChangedEvent) {
