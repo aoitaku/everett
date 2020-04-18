@@ -47,7 +47,7 @@ function prepareTestData (dir: string) {
 
 function cleanTestData (dir: string) {
   return Promise.all([...dataNames, 'Event'].map((data) => {
-    return promisify(fs.unlink)(`${dir}/data/Test_${data}.json`)
+    return promisify(fs.unlink).bind(fs)(`${dir}/data/Test_${data}.json`)
   })).catch((err) => {
     console.error(err)
   })

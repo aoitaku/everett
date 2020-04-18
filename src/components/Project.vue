@@ -45,7 +45,7 @@ export default class Project extends Vue {
     }
     const projectDir = path.dirname(this.selectedProject)
     const systemDataPath = (path.join(projectDir, 'data', 'System.json'))
-    const systemDataFile = await promisify(fs.readFile)(systemDataPath, 'utf-8')
+    const systemDataFile = await promisify(fs.readFile).bind(fs)(systemDataPath, 'utf-8')
     const systemData = JSON.parse(systemDataFile)
     const title = document.title.split('-').slice(-1)[0].trim()
     if (systemData) {
@@ -97,7 +97,7 @@ export default class Project extends Vue {
     }
     const projectDir = path.dirname(this.selectedProject)
     const dir = (path.join(projectDir, media.folder))
-    const files = await promisify(fs.readdir)(dir)
+    const files = await promisify(fs.readdir).bind(fs)(dir)
     Vue.set(store.state, 'files', {
       ...store.state.files,
       [media.name]: files.filter((file) => {
