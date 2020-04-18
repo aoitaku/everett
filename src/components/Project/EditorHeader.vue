@@ -18,10 +18,10 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import { ipcRenderer, remote } from 'electron'
 import * as fs from 'fs'
-import { store } from '../../store'
+import { store } from '@/store'
 import Save from './EditorHeader/Save.vue'
 import TestPlay from './EditorHeader/TestPlay.vue'
-import EventBus from '../../event-bus'
+import EventBus from '@/event-bus'
 
 @Component({
   components: {

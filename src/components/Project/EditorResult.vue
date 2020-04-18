@@ -19,7 +19,7 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import Toolbar from './Toolbar.vue'
 import { remote } from 'electron'
-import { store } from '../../store'
+import { store } from '@/store'
 
 const clipboardFormat = 'application/rpgmv-EventCommand'
 const pasteboardFormat = 'com.trolltech.anymime.application--rpgmv-EventCommand'

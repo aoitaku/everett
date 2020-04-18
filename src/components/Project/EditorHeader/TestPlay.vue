@@ -8,7 +8,7 @@ import { Component } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import * as fs from 'fs'
 import path from 'path'
-import { store } from '../../../store'
+import { store } from '@/store'
 
 @Component
 export default class TestPlay extends Vue {

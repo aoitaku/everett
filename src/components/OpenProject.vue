@@ -7,7 +7,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { remote } from 'electron'
-import { store } from '../store'
+import { store } from '@/store'
 
 @Component
 export default class OpenProject extends Vue {

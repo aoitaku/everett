@@ -13,8 +13,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
-import { store } from '../../store'
-import EventBus from '../../event-bus'
+import { store } from '@/store'
+import EventBus from '@/event-bus'
 import MonacoEditor from 'vue-monaco'
 import * as monacoEditor from 'monaco-editor'
 import { cursorTo } from 'readline'

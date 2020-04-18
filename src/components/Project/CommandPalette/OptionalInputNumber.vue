@@ -14,7 +14,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop, Watch } from 'vue-property-decorator'
-import { store } from '../../../store'
+import { store } from '@/store'
 
 @Component
 export default class OptionalInputNumber extends Vue {

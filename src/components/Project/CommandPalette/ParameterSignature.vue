@@ -38,7 +38,7 @@ span.parameter-signature
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
-import { IParameterSignature } from '../../../commands/definitions'
+import { IParameterSignature } from '@/commands/definitions'
 import ListValue from './ListValue.vue'
 import SelectValue from './SelectValue.vue'
 import Value from './Value.vue'

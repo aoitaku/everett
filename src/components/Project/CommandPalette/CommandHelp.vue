@@ -27,8 +27,8 @@ import CommandUsage from './CommandUsage.vue'
 import CommandPreview from './CommandPreview.vue'
 import CommandForm from './CommandForm.vue'
 import Slider from './Slider.vue'
-import { ICommandDefinition, IParameterSignature } from '../../../commands/definitions'
-import { store } from '../../../store'
+import { ICommandDefinition, IParameterSignature } from '@/commands/definitions'
+import { store } from '@/store'
 
 @Component({
   components: {

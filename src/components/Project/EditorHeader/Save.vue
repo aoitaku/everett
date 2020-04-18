@@ -8,7 +8,7 @@ import { Component } from 'vue-property-decorator'
 import { promisify } from 'util'
 import * as fs from 'fs'
 import { remote } from 'electron'
-import { store } from '../../../store'
+import { store } from '@/store'
 
 @Component
 export default class Save extends Vue {

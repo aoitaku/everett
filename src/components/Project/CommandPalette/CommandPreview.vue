@@ -35,9 +35,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
-import { ICommandDefinition } from '../../../commands/definitions'
+import { ICommandDefinition } from '@/commands/definitions'
 import Parameter from './Parameter.vue'
-import EventBus from '../../../event-bus'
+import EventBus from '@/event-bus'
 
 @Component({
   components: {

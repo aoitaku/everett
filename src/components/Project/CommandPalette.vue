@@ -103,7 +103,7 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import CommandHelp from './CommandPalette/CommandHelp.vue'
-import { commandDefinitions } from '../../commands/definitions'
+import { commandDefinitions } from '@/commands/definitions'
 
 const basicCommandCodes = [230]
 const screenCommandCodes = [221, 222, 223, 224, 225, 236]

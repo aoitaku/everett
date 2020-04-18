@@ -72,7 +72,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop, Watch } from 'vue-property-decorator'
-import { IParameterSignature } from '../../../commands/definitions'
+import { IParameterSignature } from '@/commands/definitions'
 import ColorEditor from './ColorEditor.vue'
 import ToneEditor from './ToneEditor.vue'
 import FileSelect from './FileSelect.vue'
