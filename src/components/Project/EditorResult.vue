@@ -64,11 +64,12 @@ export default class EditorResult extends Vue {
     font-family: 'Menlo', 'consolas', 'メイリオ', monospace
     word-wrap: break-word
     word-break: break-all
-    white-space: pre-wrap
+    white-space: nowrap
     height: calc(100% - 29px)
-    overflow-y: scroll
+    overflow: scroll
     &::-webkit-scrollbar
       width: 5px
+      height: 5px
     &::-webkit-scrollbar-track
       background-color: #eee
     &::-webkit-scrollbar-thumb
