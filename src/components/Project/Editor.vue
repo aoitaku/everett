@@ -6,7 +6,8 @@
       v-model="source",
       @change="sourceChanged"
       :options="monacoOptions",
-      :language="monacoOptions.language",
+      :theme="monacoEditorTheme",
+      :language="monacoEditorLanguage",
     )
 </template>
 
@@ -30,11 +31,11 @@ export default class Editor extends Vue {
   public source = ''
   public sharedState = store.state
   public editor!: monacoEditor.editor.ICodeEditor
+  public monacoEditorLanguage = 'everett'
+  public monacoEditorTheme = 'everett'
 
   public get monacoOptions (): MonacoOptions {
     return {
-      language: 'everett',
-      theme: 'everett',
       minimap: { enabled: false },
       fontSize: 15,
       tabSize: 2,
