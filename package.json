@@ -18,7 +18,7 @@
     "vue": "^2.6.10",
     "vue-awesome": "^3.5.4",
     "vue-class-component": "^7.0.2",
-    "vue-monaco": "^1.1.0",
+    "vue-monaco": "1.1.0",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3"
   },
@@ -43,5 +43,9 @@
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.39.3"
   },
-  "main": "background.js"
+  "main": "background.js",
+  "resolutions": {
+    "vue-cli-plugin-electron-builder/**/minimist": "^0.2.1",
+    "@vue/cli-service/copy-webpack-plugin/serialize-javascript": "^2.1.1"
+  }
 }

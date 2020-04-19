@@ -112,6 +112,7 @@ export default class Project extends Vue {
 <style lang="sass" scoped>
 .project
   height: 100%
+  overflow: hidden
   .middle
     height: calc(100% - 40px)
     display: flex

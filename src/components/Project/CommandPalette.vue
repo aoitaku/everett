@@ -155,6 +155,7 @@ export default class CommandPalette extends Vue {
   public tabSelected (tabPane: Vue, event: Event) {
     if (this.lastSelectedTabPane === tabPane) {
       this.compacted = !this.compacted
+      this.$emit('side-panel-changed')
     } else {
       this.lastSelectedTabPane = tabPane
       this.compacted = false

@@ -47,15 +47,21 @@ export default class Editor extends Vue {
   public created () {
     EventBus.$on('insert-command-clicked', this.insertCommand)
     EventBus.$on('source-read', this.setSource)
+    EventBus.$on('side-panel-changed', this.relayoutEditor)
   }
 
   public beforeDestroy () {
     EventBus.$off('insert-command-clicked', this.insertCommand)
     EventBus.$off('source-read', this.setSource)
+    EventBus.$off('side-panel-changed', this.relayoutEditor)
   }
 
   public mounted () {
     this.editor = (this.$refs.monaco as MonacoEditor.IMonacoEditorCompornent).getEditor()
+  }
+
+  public relayoutEditor () {
+    this.editor.layout()
   }
 
   public setSource (value: string) {
