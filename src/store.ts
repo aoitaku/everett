@@ -34,7 +34,7 @@ export const store: IStore = {
     parseResult: [],
     parseError: '',
     source: '',
-    showMessageParameters: ['Actor1', 0, 0, 2],
+    showMessageParameters: ['', 0, 0, 2],
     edited: false,
     busy: false,
   },
