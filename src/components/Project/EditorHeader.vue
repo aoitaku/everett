@@ -100,7 +100,7 @@ export default class EditorHeader extends Vue {
     }
     this.sharedState.selectedFile = filePaths[0]
     store.updateSource(fs.readFileSync(this.sharedState.selectedFile, 'utf-8'))
-    EventBus.$emit('insert-command-clicked', store.state.source)
+    EventBus.$emit('source-read', store.state.source)
     this.sharedState.edited = false
   }
 

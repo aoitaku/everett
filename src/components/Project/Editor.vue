@@ -65,7 +65,15 @@ export default class Editor extends Vue {
   }
 
   public setSource (value: string) {
-    this.source = value
+    const model = this.editor.getModel()
+    if (!model) {
+      return
+    }
+    const lineCount = model.getLineCount()
+    const lastLineLength = model.getLineMaxColumn(lineCount)
+    const range = new monacoEditor.Range(1, 1, lineCount, lastLineLength)
+    const text = value
+    this.editor.executeEdits('', [{ range, text, forceMoveMarkers: true }])
   }
 
   public sourceChanged (value: string, event: monacoEditor.editor.IModelContentChangedEvent) {
